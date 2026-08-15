@@ -1,0 +1,46 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>scroll test</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui}
+#main div{height:120px;border-bottom:1px solid #ccc;padding:8px}
+#log{position:fixed;top:0;right:0;background:#000;color:#0f0;font:12px monospace;padding:8px;z-index:99;white-space:pre}
+</style>
+<div id="log">log</div>
+<div id="main"></div>
+<script>
+function build(n){
+  let h='';
+  for(let i=0;i<n;i++) h+='<div id="qz-'+i+'">bloco '+i+'</div>';
+  document.getElementById('main').innerHTML=h;
+}
+build(60);
+
+// replica exata do fluxo do build-site.mjs
+function renderTopic(){
+  build(60);
+  window.scrollTo(0,0);          // L628
+}
+function route(keepScroll){
+  const scroll = keepScroll ? window.scrollY : 0;
+  renderTopic();
+  if (keepScroll) window.scrollTo(0, scroll);   // L754
+}
+function answerQuiz(i){
+  route(true);                                  // L669
+  const el=document.getElementById('qz-'+i);
+  if(el) el.scrollIntoView({block:'nearest'});   // L671
+}
+window.__probe = function(i){
+  const before = window.scrollY;
+  answerQuiz(i);
+  const sync = window.scrollY;
+  return new Promise(res=>{
+    setTimeout(()=>{
+      res({before:before, sync:sync, after400:window.scrollY});
+    },400);
+  });
+};
+</script>
