@@ -8,3 +8,6 @@ Desktop.ini
 
 # Node (caso algum dia entre dependência aqui)
 node_modules/
+
+# Arquivos temporarios de teste
+__*
