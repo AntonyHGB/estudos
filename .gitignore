@@ -1,0 +1,10 @@
+# Claude Code — configurações locais da máquina
+.claude/settings.local.json
+
+# Sistema
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Node (caso algum dia entre dependência aqui)
+node_modules/
