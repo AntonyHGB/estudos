@@ -898,11 +898,11 @@ if (navigator.storage && navigator.storage.persist) { try { navigator.storage.pe
 
 function getMark(t, i){ return LS.get(SKEY + ':' + t + ':' + i) || ''; }
 function setMark(t, i, v){ var k = SKEY + ':' + t + ':' + i; if (v) LS.set(k, v); else LS.del(k); }
-function getQuizAns(t, i){ var v = LS.get(SKEY + ':quiz:' + t + ':' + i); return v === null ? null : +v; }
-function setQuizAns(t, i, v){ LS.set(SKEY + ':quiz:' + t + ':' + i, String(v)); }
+function getQuizAns(t, i){ var v = LS.get(SKEY + ':quiz:v2:' + t + ':' + i); return v === null ? null : +v; }
+function setQuizAns(t, i, v){ LS.set(SKEY + ':quiz:v2:' + t + ':' + i, String(v)); }
 function clearQuiz(t){
   var top = DATA.topics.find(function(x){ return x.id === t; });
-  if (top) top.quiz.forEach(function(_, i){ LS.del(SKEY + ':quiz:' + t + ':' + i); });
+  if (top) top.quiz.forEach(function(_, i){ LS.del(SKEY + ':quiz:v2:' + t + ':' + i); });
 }
 function topicProgress(t){
   var done = 0;
@@ -938,7 +938,7 @@ function unb64url(str){
 function encodeProgress(){
   var bits = [];
   var push = function(val, n){ for (var b = n - 1; b >= 0; b--) bits.push((val >> b) & 1); };
-  push(1, 8);                    // versao
+  push(2, 8);                    // versao do formato (2 = posicoes balanceadas)
   push(DATA.fp & 0xffff, 16);    // impressao digital do layout
   DATA.topics.forEach(function(t){
     t.cards.forEach(function(_, i){ push(MARKS.indexOf(getMark(t.id, i)) < 0 ? 0 : MARKS.indexOf(getMark(t.id, i)), 2); });
@@ -962,7 +962,7 @@ function decodeProgress(code){
   DATA.topics.forEach(function(t){ need += t.cards.length * 2 + t.quiz.length * 3; });
   if (bytes.length * 8 < need) return { error: 'Código incompleto para este material.' };
   var ver = read(8);
-  if (ver !== 1) return { error: 'Código de uma versão diferente do app.' };
+  if (ver !== 2) return { error: 'Código gerado antes do rebalanceamento do quiz — as respostas não valem mais.' };
   var fp = read(16);
   var marks = [], quiz = [], nMarks = 0, nQuiz = 0;
   DATA.topics.forEach(function(t){
@@ -975,7 +975,7 @@ function decodeProgress(code){
 }
 function applyProgress(p){
   p.marks.forEach(function(m){ setMark(m[0], m[1], m[2]); });
-  p.quiz.forEach(function(q){ if (q[2] > 0) setQuizAns(q[0], q[1], q[2] - 1); else LS.del(SKEY + ':quiz:' + q[0] + ':' + q[1]); });
+  p.quiz.forEach(function(q){ if (q[2] > 0) setQuizAns(q[0], q[1], q[2] - 1); else LS.del(SKEY + ':quiz:v2:' + q[0] + ':' + q[1]); });
 }
 
 /* ---------- navegacao lateral ---------- */

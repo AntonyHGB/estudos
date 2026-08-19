@@ -1,5 +1,5 @@
 // Gerado por build-site.mjs — não editar à mão.
-const CACHE = 'estudos-machine-learning-udt183';
+const CACHE = 'estudos-machine-learning-13mhe1s';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon-180.png'];
 
 self.addEventListener('install', (e) => {
