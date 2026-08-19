@@ -666,8 +666,65 @@ main{flex:1;min-width:0;padding:28px clamp(16px,4vw,56px) 80px;max-width:980px;m
 .note.ok{background:color-mix(in srgb, var(--green) 15%, var(--panel));border:1px solid var(--green)}
 .note.err{background:color-mix(in srgb, var(--red) 12%, var(--panel));border:1px solid var(--red)}
 
+/* desempenho por nível */
+.perf{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 20px;
+  margin-bottom:18px;box-shadow:var(--shadow)}
+.perf h3{margin:.1em 0 .7em;font-size:1em}
+.perf-row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:.9em}
+.perf-row .lv{width:78px;flex-shrink:0}
+.perf-row .bar{flex:1;height:9px;background:var(--code-bg);border-radius:99px;overflow:hidden;min-width:60px}
+.perf-row .bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.perf-row .bar i.hi{background:var(--green)}
+.perf-row .bar i.mid{background:var(--yellow)}
+.perf-row .bar i.lo{background:var(--red)}
+.perf-row .val{width:74px;text-align:right;flex-shrink:0;color:var(--muted);font-variant-numeric:tabular-nums}
+.perf .hint{color:var(--muted);font-size:.84em;margin:10px 0 0}
+.mini-perf{font-size:.78em;color:var(--muted);margin-top:6px}
+
+/* atalhos da home */
+.acoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0 22px}
+.acao{display:flex;flex-direction:column;gap:2px;background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:13px 15px;cursor:pointer;box-shadow:var(--shadow);text-align:left;
+  font:inherit;color:inherit;min-height:64px}
+.acao b{font-size:.95em}
+.acao span{font-size:.79em;color:var(--muted)}
+.acao.destaque{border-color:var(--accent)}
+
+/* busca */
+.busca-campo{display:flex;gap:8px;margin-bottom:16px}
+.busca-campo input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid var(--border);
+  background:var(--panel);color:var(--text);font:inherit;font-size:1em;min-height:46px}
+.busca-campo input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.hit{background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:12px 16px;
+  margin-bottom:10px;cursor:pointer;box-shadow:var(--shadow)}
+.hit .onde{font-size:.74em;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);font-weight:700}
+.hit .tit{font-weight:600;margin:3px 0}
+.hit .trecho{font-size:.87em;color:var(--muted);line-height:1.5}
+mark{background:var(--accent-soft);color:var(--text);font-weight:700;padding:0 2px;border-radius:3px}
+
+/* simulado */
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.seg button{flex:1;min-width:96px;min-height:52px;border:1px solid var(--border);background:var(--panel);
+  color:var(--text);border-radius:11px;cursor:pointer;font:inherit;font-weight:600}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme: dark){.seg button.on{color:${BG_DARK}}}
+.sim-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);
+  border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.sim-top .cont{font-weight:700;font-variant-numeric:tabular-nums}
+.sim-top .barra{flex:1;height:7px;background:var(--code-bg);border-radius:99px;overflow:hidden;min-width:80px}
+.sim-top .barra i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.sim-nav{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.sim-nav .btn{flex:1;min-width:120px}
+.alt.escolhida{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.resultado{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;
+  margin-bottom:18px;box-shadow:var(--shadow);text-align:center}
+.resultado .nota{font-size:2.5em;font-weight:800;line-height:1.1}
+.resultado .sub{color:var(--muted)}
+
 @media (hover:hover) and (pointer:fine){
   .nav-item:hover{background:var(--accent-soft)}
+  .acao:hover{border-color:var(--accent)}
+  .hit:hover{border-color:var(--accent)}
   .card-q:hover{background:var(--accent-soft)}
   .alt:hover{border-color:var(--accent);background:var(--accent-soft)}
   .alt.locked:hover{border-color:var(--border);background:none}
@@ -896,6 +953,12 @@ const LS = (function(){
 
 if (navigator.storage && navigator.storage.persist) { try { navigator.storage.persist(); } catch(e){} }
 
+var ordemRevisao = LS.get(SKEY + ':ordem') === '1';
+function toggleOrdem(){
+  ordemRevisao = !ordemRevisao;
+  LS.set(SKEY + ':ordem', ordemRevisao ? '1' : '0');
+  renderHome();
+}
 function getMark(t, i){ return LS.get(SKEY + ':' + t + ':' + i) || ''; }
 function setMark(t, i, v){ var k = SKEY + ':' + t + ':' + i; if (v) LS.set(k, v); else LS.del(k); }
 function getQuizAns(t, i){ var v = LS.get(SKEY + ':quiz:v2:' + t + ':' + i); return v === null ? null : +v; }
@@ -978,6 +1041,93 @@ function applyProgress(p){
   p.quiz.forEach(function(q){ if (q[2] > 0) setQuizAns(q[0], q[1], q[2] - 1); else LS.del(SKEY + ':quiz:v2:' + q[0] + ':' + q[1]); });
 }
 
+/* ---------- desempenho por nivel ----------
+   A media geral esconde o que importa: dar 90% no basico e 30% no avancado
+   soma um numero confortavel que nao diz se voce esta pronto. */
+var NIVEIS = ['🟢','🟡','🔴'];
+var NOME_NIVEL = { '🟢':'Básico', '🟡':'Intermediário', '🔴':'Avançado' };
+
+function statsNivel(topicoId){
+  var acc = { '🟢':{ok:0,n:0,tot:0}, '🟡':{ok:0,n:0,tot:0}, '🔴':{ok:0,n:0,tot:0} };
+  DATA.topics.forEach(function(t){
+    if (topicoId && t.id !== topicoId) return;
+    t.quiz.forEach(function(q, i){
+      var nv = acc[q.n]; if (!nv) return;
+      nv.tot++;
+      var a = getQuizAns(t.id, i);
+      if (a !== null){ nv.n++; if (a === q.c) nv.ok++; }
+    });
+  });
+  return acc;
+}
+function barraPerf(st){
+  var h = '';
+  NIVEIS.forEach(function(nv){
+    var s = st[nv];
+    var pct = s.n ? Math.round(100 * s.ok / s.n) : 0;
+    var cls = !s.n ? '' : pct >= 75 ? 'hi' : pct >= 50 ? 'mid' : 'lo';
+    h += '<div class="perf-row"><span class="lv">' + nv + ' ' + NOME_NIVEL[nv] + '</span>' +
+         '<span class="bar"><i class="' + cls + '" style="width:' + (s.n ? pct : 0) + '%"></i></span>' +
+         '<span class="val">' + (s.n ? pct + '% (' + s.ok + '/' + s.n + ')' : '—') + '</span></div>';
+  });
+  return h;
+}
+function miniPerf(topicoId){
+  var st = statsNivel(topicoId), partes = [];
+  NIVEIS.forEach(function(nv){
+    var s = st[nv];
+    if (s.tot) partes.push(nv + ' ' + (s.n ? s.ok + '/' + s.n : '—'));
+  });
+  return partes.join(' · ');
+}
+
+/* ---------- o que precisa de revisao ---------- */
+function quizErrados(){
+  var out = [];
+  DATA.topics.forEach(function(t){
+    t.quiz.forEach(function(q, i){
+      var a = getQuizAns(t.id, i);
+      if (a !== null && a !== q.c) out.push({ t: t.id, i: i });
+    });
+  });
+  return out;
+}
+function abertasRevisar(){
+  var out = [];
+  DATA.topics.forEach(function(t){
+    t.cards.forEach(function(c, i){
+      var m = getMark(t.id, i);
+      if (m === 'meh' || m === 'bad') out.push({ t: t.id, i: i, m: m });
+    });
+  });
+  return out;
+}
+
+/* ---------- repeticao espacada leve ----------
+   Sem virar Anki: guarda quando o tema foi tocado pela ultima vez e usa o
+   desempenho para decidir quem esta devendo revisao primeiro. */
+function marcarRevisao(tid){ LS.set(SKEY + ':rev:' + tid, String(Date.now())); }
+function infoRevisao(t){
+  var ts = LS.get(SKEY + ':rev:' + t.id);
+  var qp = quizProgress(t);
+  var acc = qp.answered ? qp.correct / qp.answered : null;
+  if (!ts) return { dias: null, acc: acc, devendo: qp.answered > 0, prio: qp.answered ? 5 : 0 };
+  var dias = Math.floor((Date.now() - (+ts)) / 86400000);
+  // Desempenho ruim encurta o intervalo: 70% ou menos pede revisao em 3 dias.
+  var limite = acc === null ? 7 : acc <= 0.7 ? 3 : acc <= 0.9 ? 7 : 14;
+  return { dias: dias, acc: acc, devendo: dias >= limite, prio: dias / limite };
+}
+function temasDevendo(){
+  return DATA.topics.filter(function(t){ return t.quiz.length && infoRevisao(t).devendo; });
+}
+function textoRevisao(t){
+  var r = infoRevisao(t);
+  if (r.dias === null) return '';
+  if (r.dias === 0) return 'revisado hoje';
+  if (r.dias === 1) return 'revisado ontem';
+  return 'há ' + r.dias + ' dias';
+}
+
 /* ---------- navegacao lateral ---------- */
 function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
@@ -1001,11 +1151,19 @@ function renderSidebar(activeId){
   var h = '<div class="brand"><span class="em">' + DATA.emoji + '</span><h1>' + DATA.title +
           '<small>material de entrevistas</small></h1></div>';
   h += '<a class="nav-item' + (activeId === 'home' ? ' active' : '') + '" href="#home"><span class="num">🏠</span> Início &amp; guia</a>';
+  h += '<a class="nav-item' + (activeId === 'busca' ? ' active' : '') + '" href="#busca"><span class="num">🔎</span> Buscar</a>';
+  h += '<div class="nav-label">Praticar</div>';
+  h += '<a class="nav-item' + (activeId === 'simulado' ? ' active' : '') + '" href="#simulado"><span class="num">📝</span> Simulado</a>';
+  var nRev = quizErrados().length + abertasRevisar().length;
+  h += '<a class="nav-item' + (activeId === 'revisar' ? ' active' : '') + '" href="#revisar"><span class="num">🔁</span> Revisar erros' +
+       '<span class="prog">' + (nRev ? nRev : '') + '</span></a>';
   h += '<a class="nav-item' + (activeId === 'sync' ? ' active' : '') + '" href="#sync"><span class="num">📲</span> Levar progresso</a>';
   h += '<div class="nav-label">Temas</div>';
   DATA.topics.forEach(function(t){
     var qp = quizProgress(t);
+    var rev = infoRevisao(t);
     var badge = qp.total ? (qp.answered ? '🎯 ' + qp.correct + '/' + qp.answered : '🎯 ' + qp.total) : '';
+    if (rev.devendo && qp.answered) badge = '⏰ ' + badge;
     h += '<a class="nav-item' + (activeId === t.id ? ' active' : '') + '" href="#topic/' + t.id + '">' +
          '<span class="num">' + t.id + '</span><span>' + t.shortTitle + '</span>' +
          '<span class="prog">' + badge + '</span></a>';
@@ -1023,14 +1181,52 @@ function renderHome(){
   var h = '<div class="topic-head"><h1>' + DATA.emoji + ' ' + DATA.title + '</h1>' +
           '<p class="sub">' + DATA.topics.length + ' temas · ' + totalQ + ' questões abertas comentadas · ' + totalZ + ' de múltipla escolha</p></div>';
   if (!LS.ok) h += '<div class="note err">⚠️ Este navegador está bloqueando o armazenamento local (modo privado?). O material funciona, mas o progresso não será salvo.</div>';
+
+  var nRev = quizErrados().length + abertasRevisar().length;
+  var devendo = temasDevendo();
+  h += '<div class="acoes">' +
+       '<button class="acao destaque" onclick="location.hash=\\'#simulado\\'"><b>📝 Simulado</b>' +
+       '<span>Questões de todos os temas, misturadas</span></button>' +
+       '<button class="acao" onclick="location.hash=\\'#revisar\\'"><b>🔁 Revisar erros</b>' +
+       '<span>' + (nRev ? nRev + ' questões esperando' : 'Nada pendente') + '</span></button>' +
+       '<button class="acao" onclick="location.hash=\\'#busca\\'"><b>🔎 Buscar</b>' +
+       '<span>Procurar em todo o material</span></button>' +
+       '</div>';
+
+  var st = statsNivel(null);
+  var respondidas = NIVEIS.reduce(function(a,nv){ return a + st[nv].n; }, 0);
+  if (respondidas){
+    h += '<div class="perf"><h3>Seu desempenho por nível</h3>' + barraPerf(st) +
+         '<p class="hint">A média geral esconde o que decide: ir bem no básico e mal no avançado soma um número confortável que não diz se você está pronto.</p></div>';
+  }
+
+  if (ordemRevisao && devendo.length){
+    h += '<div class="note ok" style="margin-bottom:14px">⏰ ' + devendo.length +
+         ' tema(s) pedindo revisão aparecem primeiro.</div>';
+  }
+
+  var lista = DATA.topics.slice();
+  if (ordemRevisao) lista.sort(function(a,b){ return infoRevisao(b).prio - infoRevisao(a).prio; });
+  h += '<div class="q-tools" style="margin-bottom:10px">' +
+       '<button class="chip' + (ordemRevisao ? ' active' : '') + '" onclick="toggleOrdem()">' +
+       (ordemRevisao ? '⏰ Ordenado por revisão' : '⏰ Priorizar revisão') + '</button>' +
+       (devendo.length ? '<span style="color:var(--muted);font-size:.85em;align-self:center">' + devendo.length + ' tema(s) devendo</span>' : '') +
+       '</div>';
+
   h += '<div class="home-grid">';
-  DATA.topics.forEach(function(t){
+  lista.forEach(function(t){
     var qp = quizProgress(t);
+    var rev = infoRevisao(t);
+    var quando = textoRevisao(t);
     h += '<div class="home-card" onclick="location.hash=\\'#topic/' + t.id + '\\'">' +
-         '<div class="n">TEMA ' + t.id + '</div><div class="t">' + t.shortTitle + '</div>' +
+         '<div class="n">TEMA ' + t.id + (rev.devendo && qp.answered ? ' · ⏰ revisar' : '') + '</div>' +
+         '<div class="t">' + t.shortTitle + '</div>' +
          '<div class="s">' + t.subtitle + '</div>' +
          '<div class="qn">❓ ' + t.cards.length + ' abertas · 🎯 ' + t.quiz.length + ' quiz' +
-         (qp.answered ? ' — ' + qp.correct + '/' + qp.answered + ' acertos' : '') + '</div></div>';
+         (qp.answered ? ' — ' + qp.correct + '/' + qp.answered + ' acertos' : '') +
+         (quando ? ' · ' + quando : '') + '</div>' +
+         (qp.answered ? '<div class="mini-perf">' + miniPerf(t.id) + '</div>' : '') +
+         '</div>';
   });
   h += '</div>';
   h += '<div class="readme"><h2>Como usar este material</h2>' + DATA.readmeHtml + '</div>';
@@ -1108,6 +1304,334 @@ function doImport(){
   renderSidebar('sync');
 }
 
+/* ---------- simulado ----------
+   Estudar tema a tema da uma falsa sensacao de dominio, porque o contexto ja
+   entrega metade da resposta. Aqui as questoes vem de todos os temas
+   misturadas e o gabarito so aparece no fim. */
+function simGet(){ try { return JSON.parse(LS.get(SKEY + ':sim') || 'null'); } catch(e){ return null; } }
+function simSet(s){ LS.set(SKEY + ':sim', JSON.stringify(s)); }
+function simClear(){ LS.del(SKEY + ':sim'); }
+
+function simIniciar(n){
+  var todas = [];
+  DATA.topics.forEach(function(t){ t.quiz.forEach(function(_, i){ todas.push([t.id, i]); }); });
+  for (var k = todas.length - 1; k > 0; k--){
+    var j = Math.floor(Math.random() * (k + 1));
+    var tmp = todas[k]; todas[k] = todas[j]; todas[j] = tmp;
+  }
+  var itens = todas.slice(0, Math.min(n, todas.length));
+  simSet({ itens: itens, resp: itens.map(function(){ return null; }), pos: 0, fim: false });
+  renderSimulado();
+}
+function simEscolher(j){
+  var s = simGet(); if (!s || s.fim) return;
+  s.resp[s.pos] = j; simSet(s); renderSimulado();
+}
+function simIr(d){
+  var s = simGet(); if (!s) return;
+  s.pos = Math.max(0, Math.min(s.itens.length - 1, s.pos + d)); simSet(s); renderSimulado();
+}
+function simFinalizar(){
+  var s = simGet(); if (!s) return;
+  var faltam = s.resp.filter(function(r){ return r === null; }).length;
+  if (faltam && !confirm(faltam + ' questão(ões) sem resposta serão contadas como erro. Finalizar mesmo assim?')) return;
+  s.fim = true; simSet(s);
+  s.itens.forEach(function(ref){ marcarRevisao(ref[0]); });
+  renderSimulado();
+}
+function simQuestao(ref){
+  var t = DATA.topics.find(function(x){ return x.id === ref[0]; });
+  return { t: t, q: t.quiz[ref[1]] };
+}
+
+function renderSimulado(){
+  renderSidebar('simulado');
+  document.getElementById('tbTitle').textContent = 'Simulado';
+  var s = simGet();
+  var h = '';
+
+  if (!s){
+    var totalQ = DATA.topics.reduce(function(a,t){ return a + t.quiz.length; }, 0);
+    h += '<div class="topic-head"><h1>📝 Simulado</h1>' +
+         '<p class="sub">Questões sorteadas de todos os ' + DATA.topics.length + ' temas, misturadas. ' +
+         'O gabarito só aparece no fim, com o resultado separado por tema e por nível.</p></div>';
+    h += '<div class="sync-box"><h3>Quantas questões?</h3>' +
+         '<div class="seg">' +
+         '<button onclick="simIniciar(20)">20<br><span style="font-weight:400;font-size:.8em">~10 min</span></button>' +
+         '<button onclick="simIniciar(40)">40<br><span style="font-weight:400;font-size:.8em">~20 min</span></button>' +
+         '<button onclick="simIniciar(' + totalQ + ')">Todas<br><span style="font-weight:400;font-size:.8em">' + totalQ + ' questões</span></button>' +
+         '</div>' +
+         '<p style="color:var(--muted);font-size:.87em;margin-top:12px">As respostas do simulado são independentes do quiz por tema — fazer simulado não altera o seu progresso nos temas.</p>' +
+         '</div>';
+    document.getElementById('main').innerHTML = h;
+    window.scrollTo(0,0);
+    return;
+  }
+
+  if (s.fim){
+    var acertos = 0;
+    var porTema = {}, porNivel = { '🟢':{ok:0,n:0}, '🟡':{ok:0,n:0}, '🔴':{ok:0,n:0} };
+    s.itens.forEach(function(ref, k){
+      var o = simQuestao(ref), ok = s.resp[k] === o.q.c;
+      if (ok) acertos++;
+      if (!porTema[ref[0]]) porTema[ref[0]] = { ok:0, n:0, nome:o.t.shortTitle };
+      porTema[ref[0]].n++; if (ok) porTema[ref[0]].ok++;
+      var nv = porNivel[o.q.n]; if (nv){ nv.n++; if (ok) nv.ok++; }
+    });
+    var pct = Math.round(100 * acertos / s.itens.length);
+    h += '<div class="topic-head"><h1>📝 Resultado do simulado</h1></div>';
+    h += '<div class="resultado"><div class="nota">' + pct + '%</div>' +
+         '<div class="sub">' + acertos + ' de ' + s.itens.length + ' questões</div></div>';
+
+    h += '<div class="perf"><h3>Por nível</h3>';
+    NIVEIS.forEach(function(nv){
+      var d = porNivel[nv];
+      var p = d.n ? Math.round(100 * d.ok / d.n) : 0;
+      var cls = !d.n ? '' : p >= 75 ? 'hi' : p >= 50 ? 'mid' : 'lo';
+      h += '<div class="perf-row"><span class="lv">' + nv + ' ' + NOME_NIVEL[nv] + '</span>' +
+           '<span class="bar"><i class="' + cls + '" style="width:' + p + '%"></i></span>' +
+           '<span class="val">' + (d.n ? p + '% (' + d.ok + '/' + d.n + ')' : '—') + '</span></div>';
+    });
+    h += '</div>';
+
+    h += '<div class="perf"><h3>Por tema</h3>';
+    Object.keys(porTema).sort().forEach(function(tid){
+      var d = porTema[tid];
+      var p = Math.round(100 * d.ok / d.n);
+      var cls = p >= 75 ? 'hi' : p >= 50 ? 'mid' : 'lo';
+      h += '<div class="perf-row"><span class="lv">' + tid + '</span>' +
+           '<span class="bar"><i class="' + cls + '" style="width:' + p + '%"></i></span>' +
+           '<span class="val">' + d.ok + '/' + d.n + '</span></div>';
+    });
+    h += '<p class="hint">Tema com desempenho baixo aqui é onde vale voltar a estudar.</p></div>';
+
+    h += '<button class="btn" onclick="simClear();renderSimulado()">🔁 Novo simulado</button>' +
+         '<button class="btn ghost" onclick="location.hash=\\'#home\\'">Voltar ao início</button>';
+
+    h += '<h2 style="margin-top:26px">Revisão das questões</h2>';
+    s.itens.forEach(function(ref, k){
+      var o = simQuestao(ref), marcou = s.resp[k], ok = marcou === o.q.c;
+      h += '<div class="qz l-' + o.q.levelName + '">' +
+           '<div class="qnum">' + (k+1) + ' · TEMA ' + ref[0] + ' · ' + o.q.n + ' · ' + (ok ? '✅ acertou' : '❌ errou') + '</div>' +
+           '<div class="qtext">' + o.q.q + '</div>';
+      o.q.a.forEach(function(alt, j){
+        var cls = 'alt locked' + (j === o.q.c ? ' correct' : (j === marcou ? ' wrong' : ' dim'));
+        h += '<div class="' + cls + '"><span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></div>';
+      });
+      h += '<div class="qz-exp">' + o.q.e + '</div></div>';
+    });
+    document.getElementById('main').innerHTML = h;
+    window.scrollTo(0,0);
+    return;
+  }
+
+  var ref = s.itens[s.pos], o = simQuestao(ref);
+  var respondidas = s.resp.filter(function(r){ return r !== null; }).length;
+  h += '<div class="sim-top"><span class="cont">' + (s.pos+1) + ' / ' + s.itens.length + '</span>' +
+       '<span class="barra"><i style="width:' + Math.round(100*respondidas/s.itens.length) + '%"></i></span>' +
+       '<button class="chip" onclick="simFinalizar()">Finalizar</button>' +
+       '<button class="chip" onclick="if(confirm(\\'Descartar este simulado?\\')){simClear();renderSimulado()}">Sair</button></div>';
+  h += '<div class="qz l-' + o.q.levelName + '">' +
+       '<div class="qnum">' + o.q.n + ' · TEMA ' + ref[0] + '</div>' +
+       '<div class="qtext">' + o.q.q + '</div>';
+  o.q.a.forEach(function(alt, j){
+    h += '<div class="alt' + (s.resp[s.pos] === j ? ' escolhida' : '') + '" onclick="simEscolher(' + j + ')">' +
+         '<span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></div>';
+  });
+  h += '</div>';
+  h += '<div class="sim-nav">' +
+       (s.pos > 0 ? '<button class="btn ghost" onclick="simIr(-1)">← Anterior</button>' : '') +
+       (s.pos < s.itens.length - 1
+          ? '<button class="btn" onclick="simIr(1)">Próxima →</button>'
+          : '<button class="btn" onclick="simFinalizar()">Ver resultado</button>') +
+       '</div>';
+  document.getElementById('main').innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+/* ---------- revisar erros ---------- */
+var revFeitos = {};
+function revResponderQuiz(tid, i, j){
+  var t = DATA.topics.find(function(x){ return x.id === tid; });
+  setQuizAns(tid, i, j);
+  marcarRevisao(tid);
+  if (j === t.quiz[i].c) revFeitos[tid + ':' + i] = true;
+  renderRevisar();
+}
+function revMarcar(tid, i, v){
+  setMark(tid, i, v);
+  marcarRevisao(tid);
+  if (v === 'ok') revFeitos['a' + tid + ':' + i] = true;
+  renderRevisar();
+}
+function renderRevisar(){
+  renderSidebar('revisar');
+  document.getElementById('tbTitle').textContent = 'Revisar erros';
+  var errs = quizErrados();
+  var abertas = abertasRevisar();
+  var resolvidosQuiz = Object.keys(revFeitos).filter(function(k){ return k.indexOf('a') !== 0; });
+  var resolvidasAb = Object.keys(revFeitos).filter(function(k){ return k.indexOf('a') === 0; });
+
+  var h = '<div class="topic-head"><h1>🔁 Revisar erros</h1>' +
+          '<p class="sub">Tudo que você errou ou marcou como dúvida, de todos os temas, reunido para refazer. Ao acertar, sai da lista.</p></div>';
+
+  if (!errs.length && !abertas.length && !resolvidosQuiz.length && !resolvidasAb.length){
+    h += '<p class="empty">Nada para revisar — você não tem questões erradas nem marcadas como dúvida.</p>';
+    document.getElementById('main').innerHTML = h;
+    window.scrollTo(0,0);
+    return;
+  }
+
+  if (errs.length || resolvidosQuiz.length){
+    h += '<h2>🎯 Quiz errado (' + errs.length + ')</h2>';
+    var vistos = {};
+    errs.concat(resolvidosQuiz.map(function(k){ var p = k.split(':'); return { t:p[0], i:+p[1] }; }))
+      .forEach(function(r){
+        var key = r.t + ':' + r.i;
+        if (vistos[key]) return; vistos[key] = 1;
+        var t = DATA.topics.find(function(x){ return x.id === r.t; });
+        var q = t.quiz[r.i], ans = getQuizAns(r.t, r.i), acertou = ans === q.c;
+        h += '<div class="qz l-' + q.levelName + '">' +
+             '<div class="qnum">TEMA ' + r.t + ' · ' + q.n + (acertou ? ' · ✅ resolvido' : '') + '</div>' +
+             '<div class="qtext">' + q.q + '</div>';
+        q.a.forEach(function(alt, j){
+          if (acertou){
+            var cls = 'alt locked' + (j === q.c ? ' correct' : ' dim');
+            h += '<div class="' + cls + '"><span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></div>';
+          } else {
+            h += '<div class="alt" onclick="revResponderQuiz(\\'' + r.t + '\\',' + r.i + ',' + j + ')">' +
+                 '<span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></div>';
+          }
+        });
+        if (acertou) h += '<div class="qz-exp"><span class="verdict ok">✅ Agora sim — sai da lista.</span>' + q.e + '</div>';
+        else if (ans !== null) h += '<div class="qz-exp"><span class="verdict nok">Você marcou ' + LETTERS[ans] + ' da última vez.</span>Tente de novo antes de ver a explicação.</div>';
+        h += '</div>';
+      });
+  }
+
+  if (abertas.length || resolvidasAb.length){
+    h += '<h2 style="margin-top:24px">❓ Questões abertas em dúvida (' + abertas.length + ')</h2>';
+    var vistas = {};
+    abertas.concat(resolvidasAb.map(function(k){ var p = k.slice(1).split(':'); return { t:p[0], i:+p[1] }; }))
+      .forEach(function(r){
+        var key = r.t + ':' + r.i;
+        if (vistas[key]) return; vistas[key] = 1;
+        var t = DATA.topics.find(function(x){ return x.id === r.t; });
+        var c = t.cards[r.i], m = getMark(r.t, r.i);
+        h += '<div class="card l-' + c.levelName + '" id="rev-' + r.t + '-' + r.i + '">' +
+             '<div class="card-q" onclick="var e=document.getElementById(\\'rev-' + r.t + '-' + r.i + '\\');e.classList.toggle(\\'open\\')">' +
+             '<span class="qt"><span style="color:var(--muted);font-size:.8em">TEMA ' + r.t + '</span><br>' + c.titleHtml + '</span>' +
+             '<span class="toggle">ver ▾</span></div>' +
+             '<div class="card-a">' + c.bodyHtml +
+             '<div class="card-mark"><span class="lbl">' + (m === 'ok' ? '✅ resolvido — sai da lista' : 'Como você foi agora?') + '</span>' +
+             '<button class="mark-btn' + (m==='ok'?' sel-ok':'') + '" onclick="revMarcar(\\'' + r.t + '\\',' + r.i + ',\\'ok\\')">✅ Acertei</button>' +
+             '<button class="mark-btn' + (m==='meh'?' sel-meh':'') + '" onclick="revMarcar(\\'' + r.t + '\\',' + r.i + ',\\'meh\\')">⚠️ Parcial</button>' +
+             '<button class="mark-btn' + (m==='bad'?' sel-bad':'') + '" onclick="revMarcar(\\'' + r.t + '\\',' + r.i + ',\\'bad\\')">❌ Errei</button>' +
+             '</div></div></div>';
+      });
+  }
+  document.getElementById('main').innerHTML = h;
+  bindTopicLinks();
+  window.scrollTo(0,0);
+}
+
+/* ---------- busca ---------- */
+var _idx = null;
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function semTags(h){
+  return h.replace(/<[^>]+>/g,' ')
+          .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"')
+          .replace(/&#39;/g,"'").replace(/&amp;/g,'&')
+          .replace(/\\s+/g,' ').trim();
+}
+function norm(s){ return s.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase(); }
+function idxBusca(){
+  if (_idx) return _idx;
+  _idx = [];
+  DATA.topics.forEach(function(t){
+    var re = /<section class="study-sec" id="([^"]+)"><h2>(.*?)<\\/h2>/g, m, partes = [];
+    while ((m = re.exec(t.studyHtml)) !== null) partes.push({ id:m[1], titulo:semTags(m[2]), ini:m.index });
+    partes.forEach(function(p, k){
+      var fim = k + 1 < partes.length ? partes[k+1].ini : t.studyHtml.length;
+      _idx.push({ tid:t.id, tab:'estudo', tipo:'Estudo', ancora:p.id,
+                  titulo:p.titulo, texto:semTags(t.studyHtml.slice(p.ini, fim)) });
+    });
+    t.cards.forEach(function(c, i){
+      _idx.push({ tid:t.id, tab:'questoes', tipo:'Questão aberta', foco:'card-' + i,
+                  titulo:semTags(c.titleHtml), texto:semTags(c.titleHtml + ' ' + c.bodyHtml) });
+    });
+    t.quiz.forEach(function(q, i){
+      _idx.push({ tid:t.id, tab:'quiz', tipo:'Quiz', foco:'qz-' + i,
+                  titulo:semTags(q.q), texto:semTags(q.q + ' ' + q.a.join(' · ') + ' ' + q.e) });
+    });
+  });
+  return _idx;
+}
+function destacar(txt, alvo){
+  var n = norm(txt), out = '', ini = 0, p = n.indexOf(alvo);
+  while (p !== -1){
+    out += escHtml(txt.slice(ini, p)) + '<mark>' + escHtml(txt.slice(p, p + alvo.length)) + '</mark>';
+    ini = p + alvo.length;
+    p = n.indexOf(alvo, ini);
+  }
+  return out + escHtml(txt.slice(ini));
+}
+var focoPendente = null;
+function irPara(tid, tab, ancora, foco){
+  focoPendente = { ancora: ancora, foco: foco };
+  location.hash = '#topic/' + tid + '/' + tab;
+}
+function aplicarFoco(){
+  if (!focoPendente) return;
+  var f = focoPendente; focoPendente = null;
+  setTimeout(function(){
+    var el = document.getElementById(f.foco || f.ancora);
+    if (!el) return;
+    el.scrollIntoView({ block:'center' });
+    var antes = el.style.outline;
+    el.style.outline = '3px solid var(--accent)';
+    el.style.outlineOffset = '3px';
+    setTimeout(function(){ el.style.outline = antes; el.style.outlineOffset = ''; }, 1600);
+  }, 60);
+}
+function buscar(){
+  var termo = document.getElementById('q').value.trim();
+  var alvo = norm(termo);
+  var cx = document.getElementById('res');
+  if (alvo.length < 2){ cx.innerHTML = '<p class="empty">Digite ao menos 2 caracteres.</p>'; return; }
+  var achados = [];
+  idxBusca().forEach(function(e){
+    var p = norm(e.texto).indexOf(alvo);
+    if (p === -1) return;
+    var ini = Math.max(0, p - 70), fim = Math.min(e.texto.length, p + 160);
+    achados.push({ e:e, trecho: (ini > 0 ? '… ' : '') + e.texto.slice(ini, fim) + (fim < e.texto.length ? ' …' : '') });
+  });
+  if (!achados.length){ cx.innerHTML = '<p class="empty">Nada encontrado para “' + escHtml(termo) + '”.</p>'; return; }
+  var h = '<p style="color:var(--muted);font-size:.88em">' + achados.length + ' trecho(s) encontrados</p>';
+  achados.slice(0, 40).forEach(function(a){
+    var e = a.e;
+    h += '<div class="hit" onclick="irPara(\\'' + e.tid + '\\',\\'' + e.tab + '\\',\\'' + (e.ancora||'') + '\\',\\'' + (e.foco||'') + '\\')">' +
+         '<div class="onde">Tema ' + e.tid + ' · ' + e.tipo + '</div>' +
+         '<div class="tit">' + destacar(e.titulo, alvo) + '</div>' +
+         '<div class="trecho">' + destacar(a.trecho, alvo) + '</div></div>';
+  });
+  if (achados.length > 40) h += '<p class="empty">Mostrando os 40 primeiros de ' + achados.length + '.</p>';
+  cx.innerHTML = h;
+}
+function renderBusca(){
+  renderSidebar('busca');
+  document.getElementById('tbTitle').textContent = 'Buscar';
+  document.getElementById('main').innerHTML =
+    '<div class="topic-head"><h1>🔎 Buscar no material</h1>' +
+    '<p class="sub">Procura em resumos, questões abertas e quiz de todos os temas.</p></div>' +
+    '<div class="busca-campo"><input id="q" type="search" placeholder="Ex.: idempotência, watermark, leakage..." autocomplete="off"></div>' +
+    '<div id="res"></div>';
+  var inp = document.getElementById('q');
+  inp.addEventListener('input', buscar);
+  inp.focus();
+  window.scrollTo(0,0);
+}
+
 /* ---------- topico ---------- */
 var levelFilter = 'todos';
 var statusFilter = 'todas';
@@ -1157,6 +1681,8 @@ function renderQuiz(t){
           '<span class="detail">' + qp.answered + ' de ' + qp.total + ' respondidas — toque numa alternativa para responder.</span>' +
           '<button class="chip" onclick="if(confirm(\\'Apagar suas respostas deste tema?\\')){clearQuiz(\\'' + t.id + '\\');rerenderQuiz(\\'' + t.id + '\\');}">↺ Refazer</button>' +
           '</div>';
+  // Acerto separado por nivel: e o que diz se o dominio e real ou so no basico.
+  if (qp.answered) h += '<div class="perf"><h3>Neste tema, por nível</h3>' + barraPerf(statsNivel(t.id)) + '</div>';
   t.quiz.forEach(function(q, i){
     h += quizCardHtml(t, q, i);
   });
@@ -1200,11 +1726,23 @@ function answerQuiz(tid, i, j){
     tmp.innerHTML = quizCardHtml(t, t.quiz[i], i);
     el.replaceWith(tmp.firstChild);
   }
+  marcarRevisao(tid);
   var qp = quizProgress(t);
   var head = document.querySelector('.quiz-head');
   if (head){
     head.querySelector('.score').innerHTML = '<span class="ok">' + qp.correct + '</span> / ' + qp.answered + ' acertos';
     head.querySelector('.detail').textContent = qp.answered + ' de ' + qp.total + ' respondidas — toque numa alternativa para responder.';
+    // O painel por nivel acompanha a resposta; se ainda nao existe (primeira do
+    // tema), e criado logo depois do cabecalho, sem redesenhar a lista.
+    var perf = document.querySelector('#main .perf');
+    var corpo = '<h3>Neste tema, por nível</h3>' + barraPerf(statsNivel(tid));
+    if (perf) perf.innerHTML = corpo;
+    else {
+      var novo = document.createElement('div');
+      novo.className = 'perf';
+      novo.innerHTML = corpo;
+      head.insertAdjacentElement('afterend', novo);
+    }
   }
   renderSidebar(tid);
 }
@@ -1258,6 +1796,7 @@ function markBtns(tid, i, mark){
 /* Marcar tambem atualiza so o proprio card. */
 function mark(tid, i, v){
   setMark(tid, i, v);
+  marcarRevisao(tid);
   var cm = document.getElementById('cm-' + i);
   if (cm) cm.innerHTML = '<span class="lbl">Como você foi?</span>' + markBtns(tid, i, getMark(tid, i));
   renderSidebar(tid);
@@ -1287,12 +1826,22 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 function route(){
   var hash = location.hash || '#home';
   closeSidebar();
+  // Os itens acertados ficam visiveis com a explicacao enquanto voce esta na
+  // tela de revisao; ao sair, somem de vez.
+  if (hash !== '#revisar') revFeitos = {};
   var m = hash.match(/^#topic\\/(\\d{2})(?:\\/(\\w+))?/);
   if (m){
     renderTopic(m[1], m[2] || 'estudo');
     window.scrollTo(0, 0);
+    aplicarFoco();
   } else if (hash === '#sync'){
     renderSync();
+  } else if (hash === '#simulado'){
+    renderSimulado();
+  } else if (hash === '#revisar'){
+    renderRevisar();
+  } else if (hash === '#busca'){
+    renderBusca();
   } else {
     renderHome();
   }
