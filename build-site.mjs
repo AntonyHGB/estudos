@@ -709,6 +709,83 @@ main{flex:1;min-width:0;padding:28px clamp(16px,4vw,56px) 80px;max-width:980px;m
 `;
 }
 
+/* ================================ auditoria do quiz ================================ */
+
+// Um quiz só serve para autoavaliação se não der para gabaritar sem saber o
+// assunto. Os dois vazamentos clássicos são a correta ser sempre a alternativa
+// mais longa e a correta cair sempre na mesma letra — os dois são medidos aqui,
+// e o build reclama alto quando passam do alvo.
+const ALVO_MAIS_LONGA = 0.45; // acaso com 4 alternativas = 25%
+const ALVO_POR_LETRA = 0.35; // acaso = 25%
+
+function auditarQuiz(folder, quizBank) {
+  const semMarcacao = (s) => s.replace(/\*\*/g, '').replace(/`/g, '').replace(/\*/g, '');
+  const avisos = [];
+  const letras = [0, 0, 0, 0, 0];
+  let total = 0;
+  let maisLonga = 0;
+
+  for (const [tid, questoes] of Object.entries(quizBank)) {
+    questoes.forEach((q, i) => {
+      total++;
+      letras[q.c]++;
+      const tam = q.a.map((a) => semMarcacao(a).length);
+      const maior = Math.max(...tam);
+      const menor = Math.min(...tam);
+      const correta = tam[q.c];
+      const outras = tam.filter((_, k) => k !== q.c);
+      const mediaOutras = outras.reduce((a, b) => a + b, 0) / outras.length;
+
+      if (correta === maior) maisLonga++;
+
+      const ref = `tema ${tid} questão ${i + 1}`;
+      if (correta === maior && correta > mediaOutras * 1.3) {
+        avisos.push(
+          `${ref}: correta é a maior e passa ${(((correta / mediaOutras) - 1) * 100).toFixed(0)}% da média das outras`
+        );
+      }
+      if ((maior - menor) / maior > 0.55) {
+        avisos.push(`${ref}: maior alternativa tem ${maior} e menor tem ${menor} caracteres`);
+      }
+    });
+  }
+
+  if (!total) return;
+
+  const pctLonga = maisLonga / total;
+  const pctLetras = letras.map((n) => n / total);
+  const piorLetra = Math.max(...pctLetras);
+  const okLonga = pctLonga <= ALVO_MAIS_LONGA;
+  const okLetra = piorLetra <= ALVO_POR_LETRA;
+
+  const dist = pctLetras
+    .slice(0, 4)
+    .map((p, k) => `${'ABCD'[k]} ${(p * 100).toFixed(0)}%`)
+    .join(' · ');
+
+  console.log(`  auditoria do quiz (${total} questões)`);
+  console.log(
+    `    ${okLonga ? '✔' : '✖'} correta é a mais longa: ${(pctLonga * 100).toFixed(0)}% ` +
+      `(alvo ≤ ${ALVO_MAIS_LONGA * 100}%)`
+  );
+  console.log(
+    `    ${okLetra ? '✔' : '✖'} distribuição da correta: ${dist} ` +
+      `(alvo ≤ ${ALVO_POR_LETRA * 100}% por letra)`
+  );
+
+  if (avisos.length) {
+    console.log(`    ⚠ ${avisos.length} questão(ões) com alternativa desbalanceada:`);
+    avisos.slice(0, 10).forEach((a) => console.log(`       ${a}`));
+    if (avisos.length > 10) console.log(`       ... e mais ${avisos.length - 10}`);
+  }
+  if (!okLonga || !okLetra) {
+    console.error(
+      `    ✖ ${folder}: o quiz está gabaritável sem saber o assunto — reescreva as alternativas` +
+        (okLetra ? '' : ' e rode "node balancear-quiz.mjs"')
+    );
+  }
+}
+
 /* ================================ site principal ================================ */
 
 function buildSite(site) {
@@ -1341,6 +1418,8 @@ self.addEventListener('fetch', (e) => {
       }
     });
   }
+
+  auditarQuiz(site.folder, quizBank);
 
   return { totalQuestions, totalQuiz, topics: topics.length };
 }
