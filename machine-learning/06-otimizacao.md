@@ -309,7 +309,7 @@ E antes de tudo isso: eu conferiria se o problema é mesmo de hiperparâmetro. G
 
 **Achar que perda menor sempre significa modelo melhor.** Perda de treino menor pode ser overfitting; e perdas diferentes não são comparáveis entre si.
 
-**Grid search por padrão.** Busca aleatória ou bayesiana são estritamente melhores com o mesmo orçamento.
+**Grid search por padrão.** Em espaços com várias dimensões e poucos hiperparâmetros realmente importantes, busca aleatória costuma cobrir combinações úteis melhor com o mesmo orçamento; busca bayesiana pode ser mais eficiente quando cada avaliação é cara. Não é superioridade universal: grids pequenos ainda são adequados quando há poucas opções discretas e bem conhecidas.
 
 **Ajustar hiperparâmetros no conjunto de teste.**
 

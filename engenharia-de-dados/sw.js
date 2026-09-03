@@ -1,5 +1,5 @@
 // Gerado por build-site.mjs — não editar à mão.
-const CACHE = 'estudos-engenharia-de-dados-1eblw8k';
+const CACHE = 'estudos-engenharia-de-dados-jkep5u';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon-180.png'];
 
 self.addEventListener('install', (e) => {
