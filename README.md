@@ -33,6 +33,13 @@ domínio que estudar em ordem produz:
 | 🔎 **Buscar** | Procura em resumos, questões abertas e quiz, ignorando acentos, e leva ao trecho com o termo destacado. |
 | ⏰ **Revisão espaçada** | Guarda quando cada tema foi tocado e usa o desempenho para definir o intervalo: 90% ou mais pede revisão em 14 dias, 70% ou menos em 3. A home marca e ordena os temas devendo. |
 
+A home funciona como painel de retomada: mostra progresso, acerto, pendências e recomenda uma
+única próxima ação. Para dias corridos, **Sessão rápida** inicia um simulado de 10 questões
+(aproximadamente 5 minutos); os simulados completos continuam disponíveis com 20, 40 ou todas.
+
+Cards, abas e alternativas são controles nativos de teclado, e o layout se adapta a celular,
+tablet e desktop sem perder as funções de progresso.
+
 O acerto aparece sempre separado por nível (🟢 🟡 🔴), na home e dentro de cada tema — é o
 número que diz se o domínio é real ou só no básico, que a média geral esconde.
 

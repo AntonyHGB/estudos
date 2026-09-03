@@ -8,45 +8,57 @@
 <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
 <title>Estudos — Engenharia de Dados &amp; Machine Learning</title>
 <style>
-:root{color-scheme:light dark;--bg:#f8fafc;--panel:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0}
-@media (prefers-color-scheme:dark){:root{--bg:#0b1120;--panel:#111a2e;--text:#e2e8f0;--muted:#94a3b8;--border:#1e293b}}
+:root{color-scheme:light dark;--bg:#f8fafc;--panel:#fff;--text:#0f172a;--muted:#64748b;--border:#dbe4ef}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1120;--panel:#111a2e;--text:#e6edf7;--muted:#9aa9bd;--border:#24314a}}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;
-  background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-  padding:24px 18px calc(24px + env(safe-area-inset-bottom));line-height:1.6}
-.wrap{width:100%;max-width:560px}
-h1{font-size:1.5em;margin:0 0 .2em;text-align:center}
-.sub{color:var(--muted);text-align:center;margin:0 0 28px;font-size:.95em}
-.hub-card{display:block;background:var(--panel);border:1px solid var(--border);border-left:5px solid var(--c);
-  border-radius:14px;padding:20px 22px;margin-bottom:16px;text-decoration:none;color:inherit;
-  box-shadow:0 1px 3px rgba(15,23,42,.08);transition:transform .12s,border-color .12s}
-@media (prefers-color-scheme:dark){.hub-card{border-left-color:var(--cd);box-shadow:0 1px 3px rgba(0,0,0,.4)}}
-@media (hover:hover){.hub-card:hover{transform:translateY(-2px)}}
+  background:radial-gradient(circle at 16% 12%,#0e749018,transparent 30rem),radial-gradient(circle at 84% 82%,#7c3aed18,transparent 30rem),var(--bg);
+  color:var(--text);font-family:Inter,'Segoe UI',system-ui,-apple-system,sans-serif;
+  padding:42px 20px calc(42px + env(safe-area-inset-bottom));line-height:1.6}
+.wrap{width:100%;max-width:900px}
+.eyebrow{text-align:center;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;font-size:.72em}
+h1{font-size:clamp(1.8em,5vw,2.75em);line-height:1.15;margin:.3em 0 .25em;text-align:center;letter-spacing:-.035em}
+.sub{color:var(--muted);text-align:center;margin:0 auto 34px;font-size:1em;max-width:560px}
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.hub-card{display:flex;flex-direction:column;min-height:280px;background:color-mix(in srgb,var(--panel) 94%,transparent);
+  border:1px solid var(--border);border-top:4px solid var(--c);border-radius:20px;padding:24px;text-decoration:none;color:inherit;
+  box-shadow:0 18px 45px rgba(15,23,42,.08);transition:transform .16s,border-color .16s,box-shadow .16s;backdrop-filter:blur(16px)}
+@media (prefers-color-scheme:dark){.hub-card{border-top-color:var(--cd);box-shadow:0 18px 45px rgba(0,0,0,.24)}}
+@media (hover:hover){.hub-card:hover{transform:translateY(-4px);box-shadow:0 24px 54px rgba(15,23,42,.14)}}
 .hub-card:active{transform:scale(.99)}
-.hub-em{font-size:1.9em;display:block;margin-bottom:6px}
-.hub-t{font-size:1.15em;font-weight:700;display:block}
-.hub-s{color:var(--muted);font-size:.86em;display:block;margin-top:5px}
-.hub-go{color:var(--c);font-weight:600;font-size:.9em;display:block;margin-top:12px}
+.hub-top{display:flex;justify-content:space-between;align-items:center}.hub-em{font-size:2.15em}
+.hub-pill{font-size:.72em;font-weight:700;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:5px 9px}
+.hub-t{font-size:1.35em;font-weight:800;display:block;margin-top:18px}
+.hub-s{color:var(--muted);font-size:.9em;display:block;margin-top:5px}
+.hub-meta{color:var(--muted);font-size:.82em;display:block;margin-top:16px}.hub-meta b{color:var(--text)}.hub-meta i{margin:0 5px}
+.hub-go{color:var(--c);font-weight:700;font-size:.9em;display:block;margin-top:auto;padding-top:22px}.hub-go b{font-size:1.2em}
 @media (prefers-color-scheme:dark){.hub-go{color:var(--cd)}}
 .foot{color:var(--muted);font-size:.8em;text-align:center;margin-top:26px;line-height:1.7}
+@media(max-width:680px){.tracks{grid-template-columns:1fr}.hub-card{min-height:235px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="eyebrow">Estudo orientado por prática</div>
   <h1>📚 Material de Estudos</h1>
-  <p class="sub">Preparação para entrevistas técnicas</p>
+  <p class="sub">Escolha uma trilha, teste o que você sabe e deixe a revisão espaçada indicar o próximo passo.</p>
+  <div class="tracks">
     <a class="hub-card" href="./engenharia-de-dados/" style="--c:#0e7490;--cd:#22d3ee">
-      <span class="hub-em">🛠️</span>
+      <span class="hub-top"><span class="hub-em">🛠️</span><span class="hub-pill">12 temas</span></span>
       <span class="hub-t">Engenharia de Dados</span>
-      <span class="hub-s">12 temas · 172 questões abertas · 96 de múltipla escolha</span>
-      <span class="hub-go">Abrir →</span>
+      <span class="hub-s">Resumos conceituais, prática guiada e revisão para entrevistas.</span>
+      <span class="hub-meta"><b>172</b> abertas <i>•</i> <b>96</b> de múltipla escolha</span>
+      <span class="hub-go">Entrar na trilha <b>→</b></span>
     </a>
     <a class="hub-card" href="./machine-learning/" style="--c:#7c3aed;--cd:#c4b5fd">
-      <span class="hub-em">🧠</span>
+      <span class="hub-top"><span class="hub-em">🧠</span><span class="hub-pill">12 temas</span></span>
       <span class="hub-t">Machine Learning</span>
-      <span class="hub-s">12 temas · 121 questões abertas · 96 de múltipla escolha</span>
-      <span class="hub-go">Abrir →</span>
+      <span class="hub-s">Resumos conceituais, prática guiada e revisão para entrevistas.</span>
+      <span class="hub-meta"><b>121</b> abertas <i>•</i> <b>96</b> de múltipla escolha</span>
+      <span class="hub-go">Entrar na trilha <b>→</b></span>
     </a>
+  </div>
   <p class="foot">Cada área abre um app próprio, que pode ser instalado na tela de início<br>e funciona offline depois da primeira visita.</p>
 </div>
 </body>

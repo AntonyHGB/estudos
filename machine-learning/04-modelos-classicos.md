@@ -76,7 +76,7 @@ Para regressão, o critério é redução de variância (MSE), e a predição da
 
 Bônus da RF: **erro OOB (out-of-bag)** — cada árvore não vê ~37% dos dados (a probabilidade de um exemplo não ser sorteado em n tentativas com reposição é `(1-1/n)^n → 1/e ≈ 0.368`), o que dá uma estimativa de validação praticamente de graça.
 
-**Boosting:** treinar modelos **sequencialmente**, cada um corrigindo os erros do anterior. Reduz principalmente **bias**, somando aprendizes fracos (árvores rasas) numa função forte. Não paralelizável entre árvores (embora a construção de cada árvore seja paralelizável). **Pode overfittar** se você adicionar árvores demais — ao contrário da random forest, onde adicionar árvores nunca piora, só converge.
+**Boosting:** treinar modelos **sequencialmente**, cada um corrigindo os erros do anterior. Reduz principalmente **bias**, somando aprendizes fracos (árvores rasas) numa função forte. Não paralelizável entre árvores (embora a construção de cada árvore seja paralelizável). **Pode overfittar** se você adicionar árvores demais — já na random forest, aumentar o número de árvores tende a estabilizar a variância e não aumenta a complexidade de cada árvore, embora a métrica observada ainda possa oscilar.
 
 **Gradient Boosting:** formaliza boosting como **gradiente descendente no espaço de funções**. A cada iteração, ajusta-se uma árvore ao **gradiente negativo da perda** em relação às predições atuais (os "pseudo-resíduos") e soma-se essa árvore ao modelo com um fator de encolhimento (learning rate). Para MSE, o gradiente negativo é literalmente o resíduo `y - ŷ`, e é daí que vem a intuição "cada árvore aprende o erro da anterior" — mas a formulação geral funciona para **qualquer perda diferenciável**, o que é o que torna o método tão versátil (log-loss, Huber, ranking, Poisson, quantílica).
 
@@ -185,7 +185,7 @@ Uma segunda limitação estrutural é que as fronteiras são paralelas aos eixos
 
 Boosting treina modelos **sequencialmente**, cada um focando nos erros do anterior, e soma-os. Ele reduz principalmente **bias** — parte de aprendizes fracos, árvores rasas, e os compõe numa função forte.
 
-Três consequências práticas. Bagging é paralelizável e boosting não é (entre árvores). Boosting geralmente atinge acurácia maior mas é mais sensível a hiperparâmetros e a ruído. E **boosting pode overfittar com árvores demais**, enquanto adicionar árvores a uma random forest nunca piora — só converge.
+Três consequências práticas. Bagging é paralelizável e boosting não é (entre árvores). Boosting geralmente atinge acurácia maior mas é mais sensível a hiperparâmetros e a ruído. E **boosting pode overfittar com árvores demais**, enquanto a random forest tende a estabilizar ao adicionar árvores: mais árvores não tornam cada estimador mais complexo, mas a métrica finita ainda pode oscilar.
 
 **Follow-up quase garantido:** *"Por que a random forest amostra features em cada split, além do bootstrap?"* — Para **descorrelacionar as árvores**. A variância da média de M modelos com correlação ρ é `ρσ² + (1-ρ)σ²/M`: o segundo termo desaparece com M grande, mas o primeiro, `ρσ²`, é um piso que só cai reduzindo a correlação. Só com bootstrap, todas as árvores escolheriam a mesma feature dominante na raiz e ficariam muito parecidas, então a média não ganharia quase nada. Ao restringir cada split a um subconjunto aleatório de features, cada árvore fica individualmente pior e o conjunto fica muito melhor.
 
@@ -201,7 +201,7 @@ Ele vence em tabular por várias razões combinadas. **Captura interações auto
 
 **Follow-up:** *"Quais hiperparâmetros importam mais?"* — `learning_rate` junto com o número de árvores é o eixo principal: learning rate menor com mais árvores costuma generalizar melhor, e eu deixo o número de árvores ser definido por early stopping numa validação. Depois, profundidade ou `num_leaves`, o mínimo de amostras por folha, e a estocasticidade (`subsample`, `colsample_bytree`), que regulariza. As penalidades L1/L2 explícitas são ajuste fino.
 
-**Follow-up 🔴:** *"Gradient boosting overfitta?"* — Sim, e de duas formas. Com árvores demais, porque cada uma continua reduzindo o erro de treino indefinidamente — early stopping resolve. E com árvores profundas demais, que capturam ruído. É a diferença fundamental para random forest, onde mais árvores nunca piora. É também por isso que boosting é mais sensível a rótulos ruidosos: ele foca sequencialmente nos exemplos mal-classificados, e se esses são erros de rotulagem, ele os persegue ativamente.
+**Follow-up 🔴:** *"Gradient boosting overfitta?"* — Sim, e de duas formas. Com árvores demais, porque cada uma continua reduzindo o erro de treino indefinidamente — early stopping resolve. E com árvores profundas demais, que capturam ruído. Na random forest, mais árvores apenas estabilizam a agregação, sem aumentar a complexidade de cada estimador; no boosting, cada árvore nova aumenta a função aprendida. É também por isso que boosting é mais sensível a rótulos ruidosos: ele foca sequencialmente nos exemplos mal-classificados, e se esses são erros de rotulagem, ele os persegue ativamente.
 
 ---
 

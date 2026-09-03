@@ -15,9 +15,10 @@
 
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { deflateSync } from 'node:zlib';
 
-const ROOT = new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
+const ROOT = fileURLToPath(new URL('.', import.meta.url));
 
 const SITES = [
   {
@@ -515,8 +516,9 @@ function buildCss(site) {
   color-scheme:light dark;
   --accent:${site.accent};
   --accent-soft:${site.accent}18;
-  --bg:${BG_LIGHT}; --panel:#ffffff; --text:#0f172a; --muted:#64748b;
-  --border:#e2e8f0; --code-bg:#f1f5f9; --shadow:0 1px 3px rgba(15,23,42,.08);
+  --bg:${BG_LIGHT}; --panel:#ffffff; --panel-raised:#ffffff; --panel-muted:#f1f5f9;
+  --text:#0f172a; --muted:#64748b; --border:#dbe4ef; --code-bg:#eef2f7;
+  --shadow:0 12px 34px rgba(15,23,42,.07); --shadow-sm:0 2px 8px rgba(15,23,42,.06);
   --green:#16a34a; --yellow:#ca8a04; --red:#dc2626;
   --bar:56px;
 }
@@ -524,16 +526,20 @@ function buildCss(site) {
   :root{
     --accent:${site.accentDark};
     --accent-soft:${site.accentDark}22;
-    --bg:${BG_DARK}; --panel:#111a2e; --text:#e2e8f0; --muted:#94a3b8;
-    --border:#1e293b; --code-bg:#1a2440; --shadow:0 1px 3px rgba(0,0,0,.4);
+    --bg:${BG_DARK}; --panel:#111a2e; --panel-raised:#151f36; --panel-muted:#0e1729;
+    --text:#e6edf7; --muted:#9aa9bd; --border:#24314a; --code-bg:#1a2440;
+    --shadow:0 14px 36px rgba(0,0,0,.24); --shadow-sm:0 2px 8px rgba(0,0,0,.2);
     --green:#4ade80; --yellow:#facc15; --red:#f87171;
   }
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);
+body{margin:0;font-family:Inter,'Segoe UI',system-ui,-apple-system,sans-serif;background:
+  radial-gradient(circle at 76% -10%,var(--accent-soft),transparent 34rem),var(--bg);color:var(--text);
   line-height:1.65;font-size:15.5px;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 a{color:var(--accent)}
+button,a{outline-offset:3px}
+button:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent)}
 code{background:var(--code-bg);padding:.12em .38em;border-radius:5px;font-size:.88em;
   font-family:'Cascadia Code','JetBrains Mono',Consolas,monospace;overflow-wrap:anywhere}
 p,li,td,th,.qtext,.qt{overflow-wrap:break-word}
@@ -553,17 +559,17 @@ tr:last-child td{border-bottom:none}
 .cb{color:var(--accent)}
 
 .layout{display:flex;min-height:100vh}
-aside{width:290px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);
+aside{width:280px;flex-shrink:0;background:color-mix(in srgb,var(--panel) 94%,transparent);border-right:1px solid var(--border);
   position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;padding:18px 14px;
-  padding-bottom:max(18px,env(safe-area-inset-bottom))}
-main{flex:1;min-width:0;padding:28px clamp(16px,4vw,56px) 80px;max-width:980px;margin:0 auto}
+  padding-bottom:max(18px,env(safe-area-inset-bottom));backdrop-filter:blur(18px)}
+main{flex:1;min-width:0;padding:34px clamp(18px,4vw,58px) 88px;max-width:1120px;margin:0 auto}
 .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 16px;border-bottom:1px solid var(--border);margin-bottom:12px}
 .brand .em{font-size:1.7em}
 .brand h1{font-size:1.02em;margin:0;line-height:1.25}
 .brand small{color:var(--muted);display:block;font-weight:400}
 .nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;cursor:pointer;
   color:var(--text);text-decoration:none;font-size:.92em;margin:2px 0;min-height:40px}
-.nav-item.active{background:var(--accent);color:#fff;font-weight:600}
+.nav-item.active{background:var(--accent);color:#fff;font-weight:700;box-shadow:var(--shadow-sm)}
 @media (prefers-color-scheme: dark){.nav-item.active{color:${BG_DARK}}}
 .nav-item .num{font-weight:700;font-size:.82em;opacity:.65;width:20px;flex-shrink:0}
 .nav-item .prog{margin-left:auto;font-size:.72em;opacity:.75;white-space:nowrap;text-align:right}
@@ -576,16 +582,17 @@ main{flex:1;min-width:0;padding:28px clamp(16px,4vw,56px) 80px;max-width:980px;m
 
 .topic-head h1{font-size:1.55em;margin:.1em 0 .15em}
 .topic-head .sub{color:var(--muted);margin:0 0 18px}
-.tabs{display:flex;gap:8px;margin:18px 0 26px;border-bottom:2px solid var(--border);flex-wrap:wrap}
+.tabs{display:flex;gap:8px;margin:18px 0 26px;border-bottom:1px solid var(--border);flex-wrap:wrap;
+  position:sticky;top:0;z-index:12;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px)}
 .tab{padding:11px 18px;cursor:pointer;border:none;background:none;font:inherit;font-weight:600;color:var(--muted);
   border-bottom:3px solid transparent;margin-bottom:-2px;min-height:44px}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .tab .count{font-size:.8em;opacity:.7}
 
-.toc{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:22px;box-shadow:var(--shadow)}
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:22px;box-shadow:var(--shadow-sm)}
 .toc b{font-size:.8em;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .toc a{display:block;padding:6px 0;text-decoration:none;font-size:.93em}
-.study-sec{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:8px 26px 18px;
+.study-sec{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:10px 28px 20px;
   margin-bottom:22px;box-shadow:var(--shadow)}
 .study-sec>h2{border-bottom:2px solid var(--accent-soft);padding-bottom:.35em}
 
@@ -600,7 +607,8 @@ main{flex:1;min-width:0;padding:28px clamp(16px,4vw,56px) 80px;max-width:980px;m
 .card.l-basico{border-left-color:var(--green)}
 .card.l-intermediario{border-left-color:var(--yellow)}
 .card.l-avancado{border-left-color:var(--red)}
-.card-q{padding:15px 20px;cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+.card-q{width:100%;padding:15px 20px;cursor:pointer;display:flex;gap:12px;align-items:flex-start;
+  border:0;background:transparent;color:inherit;font:inherit;text-align:left}
 .card-q .qt{font-weight:600;flex:1}
 .card-q .toggle{color:var(--muted);font-size:.82em;white-space:nowrap;padding-top:2px}
 .card-a{display:none;padding:4px 22px 14px;border-top:1px dashed var(--border)}
@@ -628,8 +636,9 @@ main{flex:1;min-width:0;padding:28px clamp(16px,4vw,56px) 80px;max-width:980px;m
 .qz.l-avancado{border-left-color:var(--red)}
 .qz .qnum{font-size:.75em;font-weight:700;color:var(--muted);letter-spacing:.05em}
 .qz .qtext{font-weight:600;margin:4px 0 12px}
-.alt{display:flex;gap:11px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;margin:8px 0;
-  cursor:pointer;align-items:flex-start;transition:border-color .1s, background .1s;min-height:44px}
+.alt{display:flex;width:100%;gap:11px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;margin:8px 0;
+  cursor:pointer;align-items:flex-start;transition:border-color .1s,background .1s,transform .1s;min-height:44px;
+  background:transparent;color:inherit;font:inherit;text-align:left}
 .alt .letter{font-weight:700;color:var(--accent);flex-shrink:0}
 .alt:active{border-color:var(--accent)}
 .alt.locked{cursor:default}
@@ -643,14 +652,39 @@ main{flex:1;min-width:0;padding:28px clamp(16px,4vw,56px) 80px;max-width:980px;m
 .qz-exp .verdict.ok{color:var(--green)}
 .qz-exp .verdict.nok{color:var(--red)}
 
-.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:24px 0}
-.home-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;
-  box-shadow:var(--shadow);transition:transform .12s}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin:20px 0 28px}
+.home-card{display:block;background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:17px 18px;cursor:pointer;
+  box-shadow:var(--shadow-sm);transition:transform .12s,border-color .12s,box-shadow .12s;color:inherit;text-decoration:none}
 .home-card .n{font-size:.78em;font-weight:700;color:var(--accent)}
 .home-card .t{font-weight:600;margin:2px 0 6px}
 .home-card .s{font-size:.83em;color:var(--muted)}
 .home-card .qn{font-size:.76em;color:var(--muted);margin-top:8px}
-.readme{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:8px 26px 18px;box-shadow:var(--shadow)}
+.topic-progress{height:5px;background:var(--code-bg);border-radius:99px;overflow:hidden;margin-top:12px}
+.topic-progress i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.readme{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:0 24px;box-shadow:var(--shadow-sm)}
+.readme summary{cursor:pointer;padding:17px 0;font-weight:700;color:var(--text)}
+.readme-body{padding:0 2px 20px;border-top:1px solid var(--border)}
+
+/* painel de retomada: mostra a proxima decisao antes da grade de conteudo */
+.resume{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(230px,.8fr);gap:14px;margin:22px 0 14px}
+.resume-main{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--panel-raised),var(--panel));
+  border:1px solid color-mix(in srgb,var(--accent) 38%,var(--border));border-radius:18px;padding:22px 24px;box-shadow:var(--shadow)}
+.resume-main:after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;right:-80px;top:-105px;
+  background:var(--accent-soft);pointer-events:none}
+.eyebrow{font-size:.72em;text-transform:uppercase;letter-spacing:.11em;color:var(--accent);font-weight:800}
+.resume-main h2{font-size:1.25em;margin:.25em 0 .3em;max-width:34rem}
+.resume-main p{color:var(--muted);margin:0 0 14px;max-width:38rem}
+.resume-actions{display:flex;gap:8px;flex-wrap:wrap}
+.resume-actions .btn{margin:0;text-decoration:none;display:inline-flex;align-items:center}
+.resume-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow-sm)}
+.stat b{display:block;font-size:1.22em;line-height:1.2;font-variant-numeric:tabular-nums}
+.stat span{display:block;color:var(--muted);font-size:.75em;margin-top:4px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-top:26px}
+.section-head h2{font-size:1.05em;margin:0}.section-head span{color:var(--muted);font-size:.82em}
+.topic-nav{display:flex;justify-content:space-between;gap:10px;margin-top:28px;padding-top:18px;border-top:1px solid var(--border)}
+.topic-nav a{display:flex;flex-direction:column;max-width:48%;padding:10px 0;text-decoration:none}
+.topic-nav a:last-child{text-align:right;margin-left:auto}.topic-nav small{color:var(--muted)}
 
 .sync-box{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 22px;
   margin-bottom:18px;box-shadow:var(--shadow)}
@@ -728,7 +762,8 @@ mark{background:var(--accent-soft);color:var(--text);font-weight:700;padding:0 2
   .card-q:hover{background:var(--accent-soft)}
   .alt:hover{border-color:var(--accent);background:var(--accent-soft)}
   .alt.locked:hover{border-color:var(--border);background:none}
-  .home-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .home-card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:var(--shadow)}
+  .alt:not(.locked):hover{transform:translateX(2px)}
 }
 
 @media (max-width: 860px){
@@ -758,11 +793,18 @@ mark{background:var(--accent-soft);color:var(--text);font-weight:700;padding:0 2
   .sync-box{padding:16px}
   .chip,.mark-btn{min-height:44px;padding:10px 16px;font-size:.88em}
   .nav-item{min-height:44px;padding:11px 12px}
-  .tabs{gap:2px}
+  .tabs{gap:2px;top:var(--bar);margin-top:12px}
   .tab{padding:11px 12px;font-size:.94em}
   .topic-head h1{font-size:1.3em}
   .home-grid{grid-template-columns:1fr}
+  .resume{grid-template-columns:1fr}.resume-stats{grid-template-columns:repeat(4,1fr)}
+  .stat{padding:10px}.stat b{font-size:1em}.stat span{font-size:.68em}
 }
+@media (max-width:560px){
+  .resume-main{padding:19px 18px}.resume-stats{grid-template-columns:1fr 1fr}
+  .section-head{align-items:flex-start;flex-direction:column}.topic-nav{font-size:.9em}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
 `;
 }
 
@@ -774,6 +816,31 @@ mark{background:var(--accent-soft);color:var(--text);font-weight:700;padding:0 2
 // e o build reclama alto quando passam do alvo.
 const ALVO_MAIS_LONGA = 0.45; // acaso com 4 alternativas = 25%
 const ALVO_POR_LETRA = 0.35; // acaso = 25%
+
+function validarQuiz(folder, quizBank){
+  const erros = [];
+  const vistas = new Map();
+  for (const [tid, questoes] of Object.entries(quizBank)){
+    if (!/^\d{2}$/.test(tid) || !Array.isArray(questoes)){
+      erros.push(`${tid}: tema ou lista inválida`);
+      continue;
+    }
+    questoes.forEach((q,i) => {
+      const ref = `tema ${tid} questão ${i + 1}`;
+      if (!q || !['🟢','🟡','🔴'].includes(q.n)) erros.push(`${ref}: nível inválido`);
+      if (!q || typeof q.q !== 'string' || !q.q.trim()) erros.push(`${ref}: enunciado vazio`);
+      if (!q || !Array.isArray(q.a) || q.a.length !== 4 || q.a.some((a) => typeof a !== 'string' || !a.trim())) erros.push(`${ref}: precisa ter quatro alternativas não vazias`);
+      if (!q || !Number.isInteger(q.c) || q.c < 0 || q.c > 3) erros.push(`${ref}: índice da correta inválido`);
+      if (!q || typeof q.e !== 'string' || !q.e.trim()) erros.push(`${ref}: explicação vazia`);
+      if (q && typeof q.q === 'string'){
+        const chave = q.q.toLowerCase().replace(/\*|`|\s+/g,' ').trim();
+        if (vistas.has(chave)) erros.push(`${ref}: enunciado duplicado de ${vistas.get(chave)}`);
+        else vistas.set(chave, ref);
+      }
+    });
+  }
+  if (erros.length) throw new Error(`${folder}: quiz inválido\n  - ${erros.join('\n  - ')}`);
+}
 
 function auditarQuiz(folder, quizBank) {
   const semMarcacao = (s) => s.replace(/\*\*/g, '').replace(/`/g, '').replace(/\*/g, '');
@@ -855,6 +922,7 @@ function buildSite(site) {
   let quizBank = {};
   const quizPath = join(dir, 'quiz.json');
   if (existsSync(quizPath)) quizBank = JSON.parse(readFileSync(quizPath, 'utf8'));
+  validarQuiz(site.folder, quizBank);
 
   const topics = files.map((f) => {
     const md = readFileSync(join(dir, f), 'utf8');
@@ -1128,6 +1196,47 @@ function textoRevisao(t){
   return 'há ' + r.dias + ' dias';
 }
 
+function resumoGeral(){
+  var r = { total:0, feitos:0, quizTotal:0, quizRespondido:0, quizAcertos:0, temas:0 };
+  DATA.topics.forEach(function(t){
+    var tocado = false;
+    r.quizTotal += t.quiz.length;
+    t.quiz.forEach(function(q,i){
+      var a = getQuizAns(t.id,i);
+      if (a !== null){ r.quizRespondido++; tocado = true; if (a === q.c) r.quizAcertos++; }
+    });
+    t.cards.forEach(function(_,i){ r.total++; if (getMark(t.id,i)){ r.feitos++; tocado = true; } });
+    if (tocado) r.temas++;
+  });
+  r.total += r.quizTotal;
+  r.feitos += r.quizRespondido;
+  return r;
+}
+
+function proximaAcao(){
+  var pendentes = quizErrados().length + abertasRevisar().length;
+  if (pendentes) return { href:'#revisar', titulo:'Revisar o que ainda não fixou', texto:pendentes + ' questão(ões) pedindo uma nova tentativa.', botao:'Abrir revisão' };
+  var devendo = temasDevendo();
+  if (devendo.length) return { href:'#topic/' + devendo[0].id + '/quiz', titulo:'Revisar ' + devendo[0].shortTitle, texto:'Este tema chegou à data de revisão espaçada.', botao:'Revisar agora' };
+  var emAndamento = DATA.topics.find(function(t){
+    var qp = quizProgress(t);
+    var marcadas = t.cards.reduce(function(n,_,i){ return n + (getMark(t.id,i) ? 1 : 0); },0);
+    var feitos = qp.answered + marcadas, total = t.quiz.length + t.cards.length;
+    return feitos > 0 && feitos < total;
+  });
+  if (emAndamento){
+    var qp = quizProgress(emAndamento);
+    var aba = qp.answered < emAndamento.quiz.length ? '/quiz' : '/questoes';
+    return { href:'#topic/' + emAndamento.id + aba, titulo:'Continuar ' + emAndamento.shortTitle, texto:'Você já começou este tema. Feche o ciclo antes de abrir outro.', botao:'Retomar tema ' + emAndamento.id };
+  }
+  var novo = DATA.topics.find(function(t){
+    return !t.quiz.some(function(_,i){ return getQuizAns(t.id,i) !== null; }) &&
+      !t.cards.some(function(_,i){ return !!getMark(t.id,i); });
+  });
+  if (novo) return { href:'#topic/' + novo.id, titulo:'Começar por ' + novo.shortTitle, texto:'Leia o resumo e tente explicar os conceitos antes de abrir as respostas.', botao:'Começar tema ' + novo.id };
+  return { href:'#simulado', titulo:'Testar retenção sem contexto', texto:'Você percorreu o material. Agora misture os temas para medir domínio real.', botao:'Abrir simulado' };
+}
+
 /* ---------- navegacao lateral ---------- */
 function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
@@ -1179,18 +1288,32 @@ function renderHome(){
   var totalQ = DATA.topics.reduce(function(a,t){ return a + t.cards.length; }, 0);
   var totalZ = DATA.topics.reduce(function(a,t){ return a + t.quiz.length; }, 0);
   var h = '<div class="topic-head"><h1>' + DATA.emoji + ' ' + DATA.title + '</h1>' +
-          '<p class="sub">' + DATA.topics.length + ' temas · ' + totalQ + ' questões abertas comentadas · ' + totalZ + ' de múltipla escolha</p></div>';
+          '<p class="sub">Aprenda, pratique e revise no ritmo certo — ' + DATA.topics.length + ' temas, ' + totalQ + ' questões abertas e ' + totalZ + ' de múltipla escolha.</p></div>';
   if (!LS.ok) h += '<div class="note err">⚠️ Este navegador está bloqueando o armazenamento local (modo privado?). O material funciona, mas o progresso não será salvo.</div>';
 
   var nRev = quizErrados().length + abertasRevisar().length;
   var devendo = temasDevendo();
+  var resumo = resumoGeral();
+  var prox = proximaAcao();
+  var pctGeral = resumo.feitos ? Math.max(1, Math.round(100 * resumo.feitos / resumo.total)) : 0;
+  var acuracia = resumo.quizRespondido ? Math.round(100 * resumo.quizAcertos / resumo.quizRespondido) + '%' : '—';
+  h += '<section class="resume" aria-label="Resumo do estudo">' +
+       '<div class="resume-main"><span class="eyebrow">Sua próxima ação</span><h2>' + prox.titulo + '</h2><p>' + prox.texto + '</p>' +
+       '<div class="resume-actions"><a class="btn" href="' + prox.href + '">' + prox.botao + ' →</a>' +
+       '<button class="btn ghost" onclick="location.hash=\\'#simulado\\';setTimeout(function(){simIniciar(10)},0)">Sessão rápida · 10 questões</button></div></div>' +
+       '<div class="resume-stats">' +
+       '<div class="stat"><b>' + pctGeral + '%</b><span>progresso geral</span></div>' +
+       '<div class="stat"><b>' + resumo.temas + '/' + DATA.topics.length + '</b><span>temas iniciados</span></div>' +
+       '<div class="stat"><b>' + acuracia + '</b><span>acerto no quiz</span></div>' +
+       '<div class="stat"><b>' + nRev + '</b><span>para revisar</span></div>' +
+       '</div></section>';
   h += '<div class="acoes">' +
-       '<button class="acao destaque" onclick="location.hash=\\'#simulado\\'"><b>📝 Simulado</b>' +
-       '<span>Questões de todos os temas, misturadas</span></button>' +
+       '<button class="acao destaque" onclick="location.hash=\\'#simulado\\'"><b>📝 Simulado completo</b>' +
+       '<span>Temas misturados, sem gabarito até o fim</span></button>' +
        '<button class="acao" onclick="location.hash=\\'#revisar\\'"><b>🔁 Revisar erros</b>' +
        '<span>' + (nRev ? nRev + ' questões esperando' : 'Nada pendente') + '</span></button>' +
        '<button class="acao" onclick="location.hash=\\'#busca\\'"><b>🔎 Buscar</b>' +
-       '<span>Procurar em todo o material</span></button>' +
+       '<span>Encontre qualquer conceito ou questão</span></button>' +
        '</div>';
 
   var st = statsNivel(null);
@@ -1213,12 +1336,15 @@ function renderHome(){
        (devendo.length ? '<span style="color:var(--muted);font-size:.85em;align-self:center">' + devendo.length + ' tema(s) devendo</span>' : '') +
        '</div>';
 
+  h += '<div class="section-head"><h2>Trilha de temas</h2><span>Abra um tema para estudar, fazer quiz ou praticar respostas abertas.</span></div>';
   h += '<div class="home-grid">';
   lista.forEach(function(t){
     var qp = quizProgress(t);
     var rev = infoRevisao(t);
     var quando = textoRevisao(t);
-    h += '<div class="home-card" onclick="location.hash=\\'#topic/' + t.id + '\\'">' +
+    var marcadas = t.cards.reduce(function(n,_,i){ return n + (getMark(t.id,i) ? 1 : 0); },0);
+    var pctTema = Math.round(100 * (qp.answered + marcadas) / Math.max(1,t.quiz.length + t.cards.length));
+    h += '<a class="home-card" href="#topic/' + t.id + '">' +
          '<div class="n">TEMA ' + t.id + (rev.devendo && qp.answered ? ' · ⏰ revisar' : '') + '</div>' +
          '<div class="t">' + t.shortTitle + '</div>' +
          '<div class="s">' + t.subtitle + '</div>' +
@@ -1226,10 +1352,11 @@ function renderHome(){
          (qp.answered ? ' — ' + qp.correct + '/' + qp.answered + ' acertos' : '') +
          (quando ? ' · ' + quando : '') + '</div>' +
          (qp.answered ? '<div class="mini-perf">' + miniPerf(t.id) + '</div>' : '') +
-         '</div>';
+         '<div class="topic-progress" aria-label="' + pctTema + '% concluído"><i style="width:' + pctTema + '%"></i></div>' +
+         '</a>';
   });
   h += '</div>';
-  h += '<div class="readme"><h2>Como usar este material</h2>' + DATA.readmeHtml + '</div>';
+  h += '<details class="readme"><summary>Guia completo de estudo e preparação para entrevistas</summary><div class="readme-body">' + DATA.readmeHtml + '</div></details>';
   document.getElementById('main').innerHTML = h;
   bindTopicLinks();
   window.scrollTo(0,0);
@@ -1357,6 +1484,7 @@ function renderSimulado(){
          'O gabarito só aparece no fim, com o resultado separado por tema e por nível.</p></div>';
     h += '<div class="sync-box"><h3>Quantas questões?</h3>' +
          '<div class="seg">' +
+         '<button onclick="simIniciar(10)">10<br><span style="font-weight:400;font-size:.8em">~5 min</span></button>' +
          '<button onclick="simIniciar(20)">20<br><span style="font-weight:400;font-size:.8em">~10 min</span></button>' +
          '<button onclick="simIniciar(40)">40<br><span style="font-weight:400;font-size:.8em">~20 min</span></button>' +
          '<button onclick="simIniciar(' + totalQ + ')">Todas<br><span style="font-weight:400;font-size:.8em">' + totalQ + ' questões</span></button>' +
@@ -1416,7 +1544,7 @@ function renderSimulado(){
            '<div class="qtext">' + o.q.q + '</div>';
       o.q.a.forEach(function(alt, j){
         var cls = 'alt locked' + (j === o.q.c ? ' correct' : (j === marcou ? ' wrong' : ' dim'));
-        h += '<div class="' + cls + '"><span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></div>';
+        h += '<button type="button" class="' + cls + '" disabled><span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></button>';
       });
       h += '<div class="qz-exp">' + o.q.e + '</div></div>';
     });
@@ -1435,8 +1563,8 @@ function renderSimulado(){
        '<div class="qnum">' + o.q.n + ' · TEMA ' + ref[0] + '</div>' +
        '<div class="qtext">' + o.q.q + '</div>';
   o.q.a.forEach(function(alt, j){
-    h += '<div class="alt' + (s.resp[s.pos] === j ? ' escolhida' : '') + '" onclick="simEscolher(' + j + ')">' +
-         '<span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></div>';
+    h += '<button type="button" class="alt' + (s.resp[s.pos] === j ? ' escolhida' : '') + '" onclick="simEscolher(' + j + ')">' +
+         '<span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></button>';
   });
   h += '</div>';
   h += '<div class="sim-nav">' +
@@ -1636,6 +1764,14 @@ function renderBusca(){
 var levelFilter = 'todos';
 var statusFilter = 'todas';
 
+function topicNav(t){
+  var i = DATA.topics.indexOf(t), prev = DATA.topics[i-1], next = DATA.topics[i+1];
+  var h = '<nav class="topic-nav" aria-label="Navegação entre temas">';
+  h += prev ? '<a href="#topic/' + prev.id + '"><small>← Tema anterior</small><strong>' + prev.shortTitle + '</strong></a>' : '<span></span>';
+  h += next ? '<a href="#topic/' + next.id + '"><small>Próximo tema →</small><strong>' + next.shortTitle + '</strong></a>' : '<a href="#simulado"><small>Próximo passo →</small><strong>Fazer um simulado</strong></a>';
+  return h + '</nav>';
+}
+
 function renderTopic(id, tab){
   var t = DATA.topics.find(function(x){ return x.id === id; });
   if (!t){ location.hash = '#home'; return; }
@@ -1646,10 +1782,10 @@ function renderTopic(id, tab){
 
   var h = '<div class="topic-head"><h1>' + t.fullTitle + '</h1>' +
           (t.subtitle ? '<p class="sub">' + t.subtitle + '</p>' : '') + '</div>';
-  h += '<div class="tabs">' +
-       '<button class="tab' + (cur==='estudo'?' active':'') + '" onclick="goTab(\\'' + id + '\\',\\'estudo\\')">📖 Estudo</button>' +
-       '<button class="tab' + (cur==='quiz'?' active':'') + '" onclick="goTab(\\'' + id + '\\',\\'quiz\\')">🎯 Quiz <span class="count">(' + t.quiz.length + ')</span></button>' +
-       '<button class="tab' + (cur==='questoes'?' active':'') + '" onclick="goTab(\\'' + id + '\\',\\'questoes\\')">❓ Abertas <span class="count">(' + t.cards.length + ')</span></button>' +
+  h += '<div class="tabs" role="tablist" aria-label="Modo de estudo">' +
+       '<button class="tab' + (cur==='estudo'?' active':'') + '" role="tab" aria-selected="' + (cur==='estudo') + '" onclick="goTab(\\'' + id + '\\',\\'estudo\\')">📖 Estudo</button>' +
+       '<button class="tab' + (cur==='quiz'?' active':'') + '" role="tab" aria-selected="' + (cur==='quiz') + '" onclick="goTab(\\'' + id + '\\',\\'quiz\\')">🎯 Quiz <span class="count">(' + t.quiz.length + ')</span></button>' +
+       '<button class="tab' + (cur==='questoes'?' active':'') + '" role="tab" aria-selected="' + (cur==='questoes') + '" onclick="goTab(\\'' + id + '\\',\\'questoes\\')">❓ Abertas <span class="count">(' + t.cards.length + ')</span></button>' +
        '</div>';
 
   if (cur === 'estudo'){
@@ -1661,6 +1797,7 @@ function renderTopic(id, tab){
       h += '</nav>';
     }
     h += t.studyHtml || '<p class="empty">Sem conteúdo de estudo neste tema.</p>';
+    h += topicNav(t);
   } else if (cur === 'quiz'){
     h += renderQuiz(t);
   } else {
@@ -1702,8 +1839,8 @@ function quizCardHtml(t, q, i){
       else if (j === ans) cls += ' wrong';
       else cls += ' dim';
     }
-    var click = answered ? '' : ' onclick="answerQuiz(\\'' + t.id + '\\',' + i + ',' + j + ')"';
-    h += '<div class="' + cls + '"' + click + '><span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></div>';
+    var click = answered ? ' disabled' : ' onclick="answerQuiz(\\'' + t.id + '\\',' + i + ',' + j + ')"';
+    h += '<button type="button" class="' + cls + '"' + click + '><span class="letter">' + LETTERS[j] + '</span><span>' + alt + '</span></button>';
   });
   if (answered){
     var ok = ans === q.c;
@@ -1777,8 +1914,8 @@ function renderOpenQuestions(t){
     if (statusFilter === 'revisar' && mark !== 'meh' && mark !== 'bad') return;
     shown++;
     h += '<div class="card l-' + c.levelName + '" id="card-' + i + '">' +
-         '<div class="card-q" onclick="toggleCard(' + i + ')"><span class="qt">' + c.titleHtml + '</span>' +
-         '<span class="toggle">ver ▾</span></div>' +
+         '<button type="button" class="card-q" aria-expanded="false" onclick="toggleCard(' + i + ')"><span class="qt">' + c.titleHtml + '</span>' +
+         '<span class="toggle">ver ▾</span></button>' +
          '<div class="card-a">' + c.bodyHtml +
          '<div class="card-mark" id="cm-' + i + '"><span class="lbl">Como você foi?</span>' + markBtns(t.id, i, mark) +
          '</div></div></div>';
@@ -1813,6 +1950,7 @@ function setFilter(kind, val){
 function toggleCard(i){
   var el = document.getElementById('card-' + i);
   el.classList.toggle('open');
+  el.querySelector('.card-q').setAttribute('aria-expanded', el.classList.contains('open') ? 'true' : 'false');
   el.querySelector('.toggle').textContent = el.classList.contains('open') ? 'ocultar ▴' : 'ver ▾';
 }
 function bindTopicLinks(){
@@ -1960,14 +2098,6 @@ self.addEventListener('fetch', (e) => {
     if (t.cards.length === 0) console.warn(`  ⚠ tema ${t.id} sem questões abertas`);
     if (t.quiz.length === 0) console.warn(`  ⚠ tema ${t.id} sem quiz`);
   }
-  for (const [tid, qs] of Object.entries(quizBank)) {
-    qs.forEach((q, i) => {
-      if (!Array.isArray(q.a) || q.a.length < 2 || q.c < 0 || q.c >= q.a.length) {
-        console.error(`  ✖ quiz inválido: tema ${tid}, questão ${i + 1}`);
-      }
-    });
-  }
-
   auditarQuiz(site.folder, quizBank);
 
   return { totalQuestions, totalQuiz, topics: topics.length };
@@ -1979,10 +2109,11 @@ function buildHub(stats) {
   const cards = SITES.map((s, i) => {
     const st = stats[i];
     return `    <a class="hub-card" href="./${s.folder}/" style="--c:${s.accent};--cd:${s.accentDark}">
-      <span class="hub-em">${s.emoji}</span>
+      <span class="hub-top"><span class="hub-em">${s.emoji}</span><span class="hub-pill">${st.topics} temas</span></span>
       <span class="hub-t">${s.title}</span>
-      <span class="hub-s">${st.topics} temas · ${st.totalQuestions} questões abertas · ${st.totalQuiz} de múltipla escolha</span>
-      <span class="hub-go">Abrir →</span>
+      <span class="hub-s">Resumos conceituais, prática guiada e revisão para entrevistas.</span>
+      <span class="hub-meta"><b>${st.totalQuestions}</b> abertas <i>•</i> <b>${st.totalQuiz}</b> de múltipla escolha</span>
+      <span class="hub-go">Entrar na trilha <b>→</b></span>
     </a>`;
   }).join('\n');
 
@@ -1996,34 +2127,44 @@ function buildHub(stats) {
 <meta name="theme-color" content="${BG_DARK}" media="(prefers-color-scheme: dark)">
 <title>Estudos — Engenharia de Dados &amp; Machine Learning</title>
 <style>
-:root{color-scheme:light dark;--bg:${BG_LIGHT};--panel:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0}
-@media (prefers-color-scheme:dark){:root{--bg:${BG_DARK};--panel:#111a2e;--text:#e2e8f0;--muted:#94a3b8;--border:#1e293b}}
+:root{color-scheme:light dark;--bg:${BG_LIGHT};--panel:#fff;--text:#0f172a;--muted:#64748b;--border:#dbe4ef}
+@media (prefers-color-scheme:dark){:root{--bg:${BG_DARK};--panel:#111a2e;--text:#e6edf7;--muted:#9aa9bd;--border:#24314a}}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;
-  background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-  padding:24px 18px calc(24px + env(safe-area-inset-bottom));line-height:1.6}
-.wrap{width:100%;max-width:560px}
-h1{font-size:1.5em;margin:0 0 .2em;text-align:center}
-.sub{color:var(--muted);text-align:center;margin:0 0 28px;font-size:.95em}
-.hub-card{display:block;background:var(--panel);border:1px solid var(--border);border-left:5px solid var(--c);
-  border-radius:14px;padding:20px 22px;margin-bottom:16px;text-decoration:none;color:inherit;
-  box-shadow:0 1px 3px rgba(15,23,42,.08);transition:transform .12s,border-color .12s}
-@media (prefers-color-scheme:dark){.hub-card{border-left-color:var(--cd);box-shadow:0 1px 3px rgba(0,0,0,.4)}}
-@media (hover:hover){.hub-card:hover{transform:translateY(-2px)}}
+  background:radial-gradient(circle at 16% 12%,#0e749018,transparent 30rem),radial-gradient(circle at 84% 82%,#7c3aed18,transparent 30rem),var(--bg);
+  color:var(--text);font-family:Inter,'Segoe UI',system-ui,-apple-system,sans-serif;
+  padding:42px 20px calc(42px + env(safe-area-inset-bottom));line-height:1.6}
+.wrap{width:100%;max-width:900px}
+.eyebrow{text-align:center;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;font-size:.72em}
+h1{font-size:clamp(1.8em,5vw,2.75em);line-height:1.15;margin:.3em 0 .25em;text-align:center;letter-spacing:-.035em}
+.sub{color:var(--muted);text-align:center;margin:0 auto 34px;font-size:1em;max-width:560px}
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.hub-card{display:flex;flex-direction:column;min-height:280px;background:color-mix(in srgb,var(--panel) 94%,transparent);
+  border:1px solid var(--border);border-top:4px solid var(--c);border-radius:20px;padding:24px;text-decoration:none;color:inherit;
+  box-shadow:0 18px 45px rgba(15,23,42,.08);transition:transform .16s,border-color .16s,box-shadow .16s;backdrop-filter:blur(16px)}
+@media (prefers-color-scheme:dark){.hub-card{border-top-color:var(--cd);box-shadow:0 18px 45px rgba(0,0,0,.24)}}
+@media (hover:hover){.hub-card:hover{transform:translateY(-4px);box-shadow:0 24px 54px rgba(15,23,42,.14)}}
 .hub-card:active{transform:scale(.99)}
-.hub-em{font-size:1.9em;display:block;margin-bottom:6px}
-.hub-t{font-size:1.15em;font-weight:700;display:block}
-.hub-s{color:var(--muted);font-size:.86em;display:block;margin-top:5px}
-.hub-go{color:var(--c);font-weight:600;font-size:.9em;display:block;margin-top:12px}
+.hub-top{display:flex;justify-content:space-between;align-items:center}.hub-em{font-size:2.15em}
+.hub-pill{font-size:.72em;font-weight:700;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:5px 9px}
+.hub-t{font-size:1.35em;font-weight:800;display:block;margin-top:18px}
+.hub-s{color:var(--muted);font-size:.9em;display:block;margin-top:5px}
+.hub-meta{color:var(--muted);font-size:.82em;display:block;margin-top:16px}.hub-meta b{color:var(--text)}.hub-meta i{margin:0 5px}
+.hub-go{color:var(--c);font-weight:700;font-size:.9em;display:block;margin-top:auto;padding-top:22px}.hub-go b{font-size:1.2em}
 @media (prefers-color-scheme:dark){.hub-go{color:var(--cd)}}
 .foot{color:var(--muted);font-size:.8em;text-align:center;margin-top:26px;line-height:1.7}
+@media(max-width:680px){.tracks{grid-template-columns:1fr}.hub-card{min-height:235px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="eyebrow">Estudo orientado por prática</div>
   <h1>📚 Material de Estudos</h1>
-  <p class="sub">Preparação para entrevistas técnicas</p>
+  <p class="sub">Escolha uma trilha, teste o que você sabe e deixe a revisão espaçada indicar o próximo passo.</p>
+  <div class="tracks">
 ${cards}
+  </div>
   <p class="foot">Cada área abre um app próprio, que pode ser instalado na tela de início<br>e funciona offline depois da primeira visita.</p>
 </div>
 </body>
@@ -2037,5 +2178,3 @@ ${cards}
 const stats = SITES.map((s) => buildSite(s));
 buildHub(stats);
 console.log('\nPronto. Abra index.html na raiz, ou publique a pasta inteira.');
-
-

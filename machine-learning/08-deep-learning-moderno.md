@@ -56,7 +56,7 @@ x = x + FFN(Norm(x))
 **Três famílias:**
 
 - **Encoder-only** (BERT) — atenção bidirecional, pré-treinado com masked language modeling. Bom para **compreensão**: classificação, NER, embeddings de sentença. Não gera texto naturalmente.
-- **Decoder-only** (família GPT, Llama, e essencialmente todos os LLMs modernos) — atenção causal, pré-treinado prevendo o próximo token. **É a arquitetura dominante em 2026**, porque a mesma formulação serve para geração e — via prompting — para praticamente qualquer tarefa.
+- **Decoder-only** (famílias GPT e Llama, entre outras) — atenção causal, pré-treinado prevendo o próximo token. **É a arquitetura dominante entre LLMs generativos generalistas em 2026**, porque a mesma formulação serve para geração e — via prompting — para muitas tarefas. Encoder-only e encoder-decoder continuam relevantes quando a tarefa favorece compreensão ou uma transformação seq2seq bem definida.
 - **Encoder-decoder** (T5, modelos de tradução) — o encoder codifica a entrada, o decoder gera atendendo ao encoder por cross-attention. Natural para seq2seq com entrada e saída bem distintas.
 
 **O que define um LLM moderno em 2026** (útil para mostrar atualidade): decoder-only com **RoPE**, **RMSNorm** em pre-norm, **SwiGLU** na camada feed-forward, **Grouped-Query Attention** (GQA) e, cada vez mais, **Mixture-of-Experts**.
@@ -87,7 +87,7 @@ x = x + FFN(Norm(x))
 
 **Estratégias, em ordem de custo:**
 
-1. **Feature extraction** — congelar o modelo pré-treinado, usá-lo como extrator de embeddings, treinar só um classificador leve por cima. Barato, rápido, e o padrão quando há **muito poucos dados** (centenas de exemplos). O modelo grande não pode overfittar porque não é atualizado.
+1. **Feature extraction** — congelar o modelo pré-treinado, usá-lo como extrator de embeddings, treinar só um classificador leve por cima. Barato, rápido, e uma boa primeira opção quando há **muito poucos dados** (centenas de exemplos). Congelar o backbone reduz drasticamente a capacidade treinável, mas a cabeça ainda pode overfittar e precisa de validação e regularização.
 2. **Fine-tuning completo** — atualizar todos os pesos, com learning rate **muito menor** que o de treino do zero (tipicamente 10 a 100× menor), para não destruir as representações aprendidas. Precisa de mais dados e mais computação.
 3. **Fine-tuning parcial** — congelar as primeiras camadas (features gerais: bordas, sintaxe) e treinar as últimas (features específicas da tarefa). Compromisso razoável.
 4. **PEFT (Parameter-Efficient Fine-Tuning)** — o padrão para LLMs.
@@ -183,7 +183,7 @@ Embeddings estáticos como Word2Vec dão um vetor por palavra independentemente 
 
 **Resposta modelo:** É reutilizar um modelo treinado numa tarefa com muitos dados como ponto de partida para outra tarefa com poucos dados. Funciona porque as representações de baixo e médio nível são amplamente compartilhadas entre tarefas do mesmo domínio: bordas e texturas servem para qualquer tarefa de visão, e estrutura sintática e semântica geral servem para qualquer tarefa de linguagem. O que é específico da tarefa costuma estar nas camadas finais.
 
-Na prática eu escolheria a estratégia pelo volume de dados: com centenas de exemplos, congelo o modelo e treino só uma cabeça leve por cima, porque o modelo grande não pode overfittar se não é atualizado; com milhares, fine-tuning das últimas camadas ou completo, com learning rate muito menor que o de treino do zero para não destruir o que foi aprendido; e para LLMs, métodos PEFT como LoRA, que treinam uma fração minúscula dos parâmetros.
+Na prática eu escolheria a estratégia pelo volume e pela distância entre os domínios: com centenas de exemplos, começo congelando o modelo e treino só uma cabeça leve, o que reduz a capacidade treinável — ainda validando o overfitting dessa cabeça; com mais dados, considero fine-tuning das últimas camadas ou completo, com learning rate muito menor que o de treino do zero para não destruir o que foi aprendido; e para LLMs, métodos PEFT como LoRA treinam uma fração minúscula dos parâmetros.
 
 ---
 
