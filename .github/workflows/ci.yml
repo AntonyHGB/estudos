@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build do site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # build-site.mjs é Node puro, sem dependências.
+      - run: node build-site.mjs
+      # Falha se os arquivos gerados commitados estiverem diferentes da fonte.
+      - name: Verificar drift dos arquivos gerados
+        run: git diff --exit-code
