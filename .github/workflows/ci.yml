@@ -18,5 +18,8 @@ jobs:
       # build-site.mjs é Node puro, sem dependências.
       - run: node build-site.mjs
       # Falha se os arquivos gerados commitados estiverem diferentes da fonte.
+      # Os PNGs são recomprimidos pelo zlib embutido no Node e mudam de bytes
+      # entre versões (ex.: 22.23.1 x 22.23.2) sem mudar o desenho; por isso a
+      # comparação os exclui e cobre HTML, JS e manifest.
       - name: Verificar drift dos arquivos gerados
-        run: git diff --exit-code
+        run: git diff --exit-code -- . ':(exclude)*.png'
