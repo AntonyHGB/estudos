@@ -26,7 +26,7 @@ Isso não torna clustering inútil — torna a **formulação da pergunta** part
 **Suposições implícitas — este é o núcleo da pergunta:**
 
 1. **Clusters aproximadamente esféricos e de tamanhos similares em extensão.** Porque a atribuição por distância euclidiana ao centroide produz fronteiras que são hiperplanos equidistantes (um diagrama de Voronoi), o que só descreve bem regiões isotrópicas.
-2. **Densidades e cardinalidades parecidas.** Minimizar a soma de quadrados favorece clusters de tamanho similar, e um cluster grande tende a ser dividido enquanto um pequeno e distante é absorvido.
+2. **Densidades e cardinalidades parecidas.** Minimizar a soma de quadrados favorece clusters de tamanho similar, e um cluster grande tende a ser dividido, enquanto um pequeno e próximo de um maior é absorvido (um pequeno e distante sobrevive com centroide próprio).
 3. **Variáveis contínuas com distância euclidiana significativa.**
 4. **k conhecido.**
 5. **Todo ponto pertence a algum cluster** — não há conceito de ruído.
@@ -100,7 +100,7 @@ Constrói uma **árvore (dendrograma)** de agrupamentos aninhados.
 
 - **Silhouette** — `(b - a)/max(a,b)`, onde `a` é a distância média intra-cluster e `b` a distância média ao cluster vizinho mais próximo. Interpretável (perto de 1 é bom, perto de 0 é fronteira, negativo indica ponto no cluster errado), mas favorece clusters convexos.
 - **Davies-Bouldin** — razão entre dispersão intra e separação inter. Menor é melhor.
-- **Calinski-Harabasz** — razão entre variância inter e intra. Maior é melhor. Tende a crescer com k.
+- **Calinski-Harabasz** — razão entre variância inter e intra. Maior é melhor, mas interprete pelo máximo, não pelo valor absoluto (em alguns regimes ele tende a crescer com k).
 
 Todas compartilham a mesma limitação: **premiam a geometria que o próprio algoritmo otimiza**, então usar silhouette para escolher k no k-means é parcialmente circular — você está medindo o quanto o resultado se parece com o que o k-means tenta produzir.
 

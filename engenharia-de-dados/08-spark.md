@@ -22,7 +22,7 @@ Hierarquia de execução, e é importante saber nomear corretamente:
 - **Stage**: um conjunto de tarefas que pode rodar sem shuffle. **As fronteiras entre estágios são exatamente os shuffles.**
 - **Task**: a unidade mínima — uma tarefa processa **uma partição**. O número de tarefas de um estágio é o número de partições.
 
-Daí decorre a relação que responde muitas perguntas: **paralelismo efetivo = min(número de partições, total de cores disponíveis)**. Se você tem 100 cores e 10 partições, 90 cores ficam ociosos. Se tem 10 cores e 10.000 partições minúsculas, o overhead de agendamento domina.
+Daí decorre a relação que responde muitas perguntas: **paralelismo efetivo = min(número de partições, total de cores disponíveis)**. Se você tem 100 cores e 10 partições, 90 cores ficam ociosas. Se tem 10 cores e 10.000 partições minúsculas, o overhead de agendamento domina.
 
 ### 1.2 Lazy evaluation e o DAG
 
@@ -285,7 +285,7 @@ Daí vêm dois problemas.
 
 **Explosão de arquivos.** Se você tem 200 partições em memória e 30 datas distintas, no pior caso são 6.000 arquivos — 200 por data, cada um pequeno. É o mecanismo pelo qual small files surgem em pipelines aparentemente normais. A solução é fazer `repartition("data")` antes de gravar, garantindo que cada data esteja concentrada em poucas tasks, e portanto em poucos arquivos.
 
-**Skew na escrita.** Se `repartition("data")` for feito e uma data tiver muito mais dados que as outras, uma task fica com todo o volume daquela data. O compromisso é `repartition(n, "data")`, que distribui cada data por n tasks — trocando um pouco mais de arquivos por escrita balanceada.
+**Skew na escrita.** Se `repartition("data")` for feito e uma data tiver muito mais dados que as outras, uma task fica com todo o volume daquela data. O `repartition(n, "data")` apenas limita o total de partições (e portanto de arquivos): como é hash partitioning, cada data continua concentrada numa única task — a skew permanece. Para dividir uma data quente entre tasks, use `repartition(n)` sem coluna (round-robin, cada data pode aparecer em até n arquivos) ou salting.
 
 Há ainda dois cuidados. **Cardinalidade da coluna de particionamento**: particionar por algo de alta cardinalidade gera milhões de diretórios com arquivos minúsculos e degrada listagem e planejamento. E **modo de escrita**: `overwrite` com particionamento estático pode apagar a tabela inteira em vez de só as partições afetadas, dependendo da configuração de overwrite dinâmico — é uma armadilha destrutiva e bem conhecida. Em tabelas gerenciadas por formato transacional, prefiro usar as operações do próprio formato, que tratam isso de forma segura e atômica.
 
@@ -303,7 +303,7 @@ Há ainda dois cuidados. **Cardinalidade da coluna de particionamento**: partici
 
 **Shuffle partitions.** Ajusto para que cada partição pós-shuffle fique na faixa alvo. Com AQE ligado, o coalescing corrige o excesso automaticamente, então errar para mais é mais seguro que errar para menos.
 
-Depois disso, eu **mediria**: rodo com uma amostra representativa, olho a UI e ajusto pelo que aparecer — spill indica falta de memória ou partições grandes; tarefas muito curtas indicam paralelismo excessivo; cores ociosos indicam partições de menos.
+Depois disso, eu **mediria**: rodo com uma amostra representativa, olho a UI e ajusto pelo que aparecer — spill indica falta de memória ou partições grandes; tarefas muito curtas indicam paralelismo excessivo; cores ociosas indicam partições de menos.
 
 E consideraria alocação dinâmica, que ajusta o número de executores conforme a demanda dos estágios — útil quando o job tem estágios de necessidades muito diferentes, e útil para custo, embora adicione latência de escala.
 

@@ -138,7 +138,7 @@ O problema: atributos de dimensão mudam ao longo do tempo (cliente muda de cida
 - É o **padrão de fato** para preservar histórico e o que quase toda entrevista quer ouvir.
 - Fatos antigas continuam apontando para a surrogate key da versão vigente **no momento do evento**, então relatórios históricos permanecem corretos. Isso se chama preservar o contexto histórico, e é o ponto central.
 - *Custo:* a dimensão cresce; a lógica de carga fica mais complexa (detectar mudança, fechar a linha anterior, abrir a nova); consultas de "estado atual" precisam filtrar por `flag_registro_atual = true`.
-- Detalhe fino que impressiona: as datas de validade devem ser um intervalo semiaberto `[inicio, fim)` para evitar ambiguidade na borda, e a linha corrente costuma usar `9999-12-31` como fim em vez de NULL, porque NULL complica os predicados de BETWEEN.
+- Detalhe fino que impressiona: as datas de validade devem ser um intervalo semiaberto `[inicio, fim)` para evitar ambiguidade na borda, e a linha corrente costuma usar `9999-12-31` como fim em vez de NULL, porque NULL complica os predicados de faixa (`>=` e `<`).
 
 **Tipo 3 — Add new column.** Mantém uma coluna adicional com o valor anterior (`regiao_atual`, `regiao_anterior`).
 - Preserva **apenas uma** mudança (ou um número fixo delas). Não é histórico completo.
@@ -241,7 +241,7 @@ Vale conhecer também **Medallion Architecture** (Bronze/Silver/Gold), que é um
 
 *Resposta modelo:* Cinco motivos. Primeiro, e o mais importante: SCD Tipo 2 exige múltiplas linhas com a mesma chave natural, então a chave primária tem que ser outra coisa. Segundo, isolamento: se o sistema de origem mudar o formato do ID ou se eu integrar duas origens com IDs conflitantes, o warehouse não quebra. Terceiro, performance: um inteiro é mais barato de comparar e armazenar em bilhões de linhas de fato do que uma string longa. Quarto, permite linhas especiais na dimensão para "desconhecido" ou "não aplicável", o que evita NULL em chave estrangeira e permite usar INNER JOIN. Quinto, lida com entidades sem chave natural estável.
 
-*Follow-up:* "E hash keys?" → São a alternativa moderna usada em Data Vault e em ambientes distribuídos: geradas determinísticamente a partir da chave natural, permitindo carga paralela sem coordenação central para gerar sequências. O trade-off é perder ordenação e aceitar risco (desprezível) de colisão.
+*Follow-up:* "E hash keys?" → São a alternativa moderna usada em Data Vault e em ambientes distribuídos: geradas deterministicamente a partir da chave natural, permitindo carga paralela sem coordenação central para gerar sequências. O trade-off é perder ordenação e aceitar risco (desprezível) de colisão.
 
 ---
 
@@ -295,7 +295,7 @@ A alternativa simplória é achatar em colunas fixas (`diagnostico_1`, `diagnost
 
 *Resposta modelo:* São dois problemas distintos.
 
-**Late-arriving fact** (o evento chega depois, mas a dimensão já existe): você precisa encontrar a versão da dimensão que estava **vigente na data do evento**, não a versão corrente. Isso significa que o lookup da surrogate key filtra por `data_evento BETWEEN data_inicio_validade AND data_fim_validade`, e não por `flag_atual = true`. Errar isso é o bug mais comum de carga de SCD Tipo 2 — e ele é silencioso, porque o resultado parece plausível.
+**Late-arriving fact** (o evento chega depois, mas a dimensão já existe): você precisa encontrar a versão da dimensão que estava **vigente na data do evento**, não a versão corrente. Isso significa que o lookup da surrogate key filtra por `data_evento >= data_inicio_validade AND data_evento < data_fim_validade`, e não por `flag_atual = true`. Errar isso é o bug mais comum de carga de SCD Tipo 2 — e ele é silencioso, porque o resultado parece plausível.
 
 **Late-arriving dimension / early-arriving fact** (o evento chega antes de a dimensão existir): você não pode descartar o fato nem deixar a FK nula. A solução padrão é criar uma **linha inferida (inferred member)** na dimensão, com a chave natural conhecida e os demais atributos preenchidos com valores default ou "desconhecido", marcada com uma flag de inferida. Quando a dimensão real chegar, você atualiza aquela linha (comportamento Tipo 1) em vez de criar uma nova, e desmarca a flag. Assim a fato nunca perde a ligação.
 
@@ -349,7 +349,7 @@ O outro erro clássico é **misturar grãos na mesma tabela**: linhas de item de
 
 **Somar métricas semi-aditivas ao longo do tempo.** Somar saldos diários da mesma conta produz um número sem significado. Semi-aditivas exigem `LAST_VALUE` ou média no eixo tempo, e soma nos outros eixos.
 
-**Armazenar percentuais e médias pré-calculadas na fato.** Média de médias e soma de percentuais estão errados sempre que os grupos têm tamanhos diferentes. Guarde numerador e denominador.
+**Armazenar percentuais e médias pré-calculadas na fato.** Média de médias está errada quando os grupos têm tamanhos diferentes; soma de percentuais está errada sempre que os denominadores divergem. Guarde numerador e denominador.
 
 **Confundir snowflake com normalização da tabela fato.** Snowflake normaliza **dimensões**. A fato permanece intacta. Candidatos às vezes descrevem quebrar a fato em várias tabelas, o que não é snowflake — é outra coisa (e geralmente uma má ideia).
 

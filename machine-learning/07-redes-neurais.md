@@ -41,7 +41,7 @@ Backprop é **a regra da cadeia aplicada de forma eficiente**, com reuso de resu
 
 ### 1.3 Funções de ativação
 
-**Sigmoide** `σ(z) = 1/(1+e^{-z})` — saída em (0,1). Três problemas: **satura** (derivada máxima de 0.25 e tendendo a zero nos extremos, o que causa vanishing gradient), **não é centrada em zero** (as saídas são todas positivas, então os gradientes de todos os pesos de um neurônio têm o mesmo sinal, causando atualizações em ziguezague), e `exp` é caro. Hoje é usada **apenas na saída** de classificação binária.
+**Sigmoide** `σ(z) = 1/(1+e^{-z})` — saída em (0,1). Três problemas: **satura** (derivada máxima de 0.25 e tendendo a zero nos extremos, o que causa vanishing gradient), **não é centrada em zero** (as saídas são todas positivas, então os gradientes de todos os pesos de um neurônio têm o mesmo sinal, causando atualizações em ziguezague), e `exp` é caro. Hoje é usada sobretudo na saída de classificação binária e nos gates de RNNs (LSTM/GRU).
 
 **Tanh** — saída em (-1,1). Centrada em zero, o que é melhor que a sigmoide, mas ainda satura (derivada máxima 1). Sobrevive dentro de LSTMs e GRUs.
 

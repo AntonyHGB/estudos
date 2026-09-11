@@ -21,7 +21,7 @@ Três consequências que orientam qualquer resposta boa neste tópico:
 
 **Data drift (covariate shift)** — `P(X)` muda, `P(y|X)` permanece. A distribuição das entradas mudou, mas a relação aprendida continua válida. Exemplo: sua base de usuários passou a ser mais jovem; a relação entre comportamento e churn não mudou, mas você está operando numa região do espaço de features com menos dados de treino. Efeito: degradação moderada, pior nas regiões novas.
 
-**Concept drift** — `P(y|X)` muda. **A relação em si mudou** e o modelo está errado, não apenas extrapolando. Exemplo: fraudadores adotam uma nova técnica; a mesma assinatura comportamental que indicava fraude agora indica comportamento legítimo. Efeito: degradação séria, e nenhuma quantidade de dados novos com features antigas resolve — exige rerotulagem e retreino.
+**Concept drift** — `P(y|X)` muda. **A relação em si mudou** e o modelo está errado, não apenas extrapolando. Exemplo: fraudadores adotam uma nova técnica; a mesma assinatura comportamental que indicava fraude agora indica comportamento legítimo. Efeito: degradação séria, e nenhuma quantidade de dados novos com features antigas resolve — exige rerrotulagem e retreino.
 
 **Label drift / prior shift** — `P(y)` muda. A prevalência mudou. Efeito principal: **descalibração**, mesmo com o poder discriminativo intacto. Corrigível analiticamente ajustando o intercepto/limiar.
 
@@ -84,7 +84,7 @@ Três consequências que orientam qualquer resposta boa neste tópico:
 
 - **Retreino automático precisa de validação automática e gate.** Um modelo novo só substitui o antigo se passar em testes: métricas mínimas num conjunto de referência, ausência de regressão em segmentos críticos, e sanidade da distribuição de scores. Sem gate, retreino automático é um mecanismo de propagar corrupção de dados para produção.
 - **Sempre comparar o candidato com o modelo atual**, no mesmo conjunto e no mesmo período.
-- **Manter capacidade de rollback rápido** e versionamento de modelo, dados, código e features juntos. Um modelo é a combinação dos quatro, e reproduzir sem qualquer um deles é impossível.
+- **Manter capacidade de rollback rápido** e versionamento de código, dados, configuração/hiperparâmetros e ambiente juntos (as definições de features fazem parte do artefato). Um modelo é a combinação dos quatro, e reproduzir sem qualquer um deles é impossível.
 - **Janela de dados** é uma decisão real: usar tudo dá mais dados mas inclui regimes obsoletos; janela deslizante adapta mais rápido mas descarta informação. Ponderação temporal é o compromisso.
 
 ### 1.5 Serving: batch vs online
@@ -155,7 +155,7 @@ Adequado quando: a entrada só existe no momento da requisição (fraude na tran
 
 ### 1.9 Reprodutibilidade e governança
 
-**Versionar quatro coisas juntas:** código, dados, configuração/hiperparâmetros, e ambiente. Um modelo é a combinação dos quatro; faltando um, ele não é reproduzível.
+**Versionar quatro coisas juntas:** código, dados, configuração/hiperparâmetros, e ambiente — a mesma lista da seção de retreino. Um modelo é a combinação dos quatro; faltando um, ele não é reproduzível.
 
 **Model registry** — artefatos versionados com metadados: quem treinou, com quais dados, quais métricas, qual estágio (staging/produção/arquivado), e linhagem completa.
 

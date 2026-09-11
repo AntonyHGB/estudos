@@ -108,7 +108,7 @@ Na prática, o IC é mais informativo que o p-valor porque comunica **magnitude 
 | Associação entre categóricas | **Qui-quadrado** |
 | Sem suposição de normalidade | **Mann-Whitney U** (não-paramétrico) |
 | Dados pareados | **t-test pareado**, Wilcoxon |
-| Distribuições inteiras | **Kolmogorov-Smirnov** — que é também o teste padrão para detectar drift, ver [11](11-mlops-producao.md) |
+| Distribuições inteiras | **Kolmogorov-Smirnov** — um dos testes usuais para drift em features contínuas (o padrão de indústria em crédito é o PSI — ver [11](11-mlops-producao.md)) |
 
 **Correção para múltiplas comparações** — importante e cobrada: testando 20 hipóteses a α = 0.05, a chance de ao menos um falso positivo é `1 - 0.95²⁰ ≈ 64%`. Correções: **Bonferroni** (dividir α pelo número de testes — simples, conservador, reduz poder), **Benjamini-Hochberg** (controla a taxa de falsas descobertas em vez do erro familiar; menos conservador e geralmente preferível quando há muitas hipóteses). É diretamente relevante para A/B tests com muitas métricas e para seleção de features.
 

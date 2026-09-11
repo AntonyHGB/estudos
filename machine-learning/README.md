@@ -6,7 +6,7 @@ Material focado em **conceitos e perguntas de entrevista**, não em código para
 
 ## Como usar este material
 
-Cada arquivo tem três seções:
+Os arquivos 01–11 seguem três seções; o 12 (ML System Design) tem estrutura própria (framework de resposta, padrões, estudos de caso e perguntas de calibração). As seções dos demais são:
 
 1. **Resumo conceitual** — a explicação densa. Leia primeiro. Fórmulas aparecem só quando esclarecem algo; não decore.
 2. **Perguntas de entrevista** — cada pergunta marcada com nível, seguida de uma resposta modelo (o que o entrevistador quer ouvir) e os follow-ups comuns.

@@ -328,7 +328,7 @@ Meu primeiro passo concreto seria `EXPLAIN ANALYZE` comparando estimado com real
 
 **Terceiro, evitar recomputar.** Se a mesma agregação roda várias vezes por dia sobre dados que mudam uma vez por dia, materializar é a resposta óbvia: uma tabela agregada pré-calculada, ou view materializada com refresh incremental. Troco compute recorrente por storage e uma latência de atualização controlada — e essa é quase sempre a otimização de maior retorno nesse cenário.
 
-**Quarto, agregação incremental.** Se o dado é append-only por período, agregar só o novo período e combinar com o histórico já agregado transforma um custo proporcional ao total num custo proporcional ao delta. Funciona para métricas aditivas; para `COUNT DISTINCT` exige estruturas aproximadas como HyperLogLog, que é um ótimo detalhe a mencionar.
+**Quarto, agregação incremental.** Se o dado é append-only por período, agregar só o novo período e combinar com o histórico já agregado transforma um custo proporcional ao total num custo proporcional ao delta. Funciona para métricas aditivas; para `COUNT DISTINCT` geralmente exige estruturas dedicadas — bitmaps exatos ou esboços aproximados como HyperLogLog, conforme cardinalidade e tolerância a erro — um ótimo detalhe a mencionar.
 
 **Quinto, questionar o requisito.** Muitas dessas queries calculam granularidade que ninguém usa, ou um histórico completo quando o usuário só olha 90 dias. Reduzir o escopo é a otimização mais eficaz e a mais ignorada.
 

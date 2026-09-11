@@ -90,7 +90,7 @@ Termine sempre com: o que pode dar errado, o que você monitoraria, e qual seria
 
 É **o padrão mais importante de system design em ML** e resolve o mesmo problema em recomendação, busca, feed e anúncios: você não pode pontuar milhões de itens com um modelo caro dentro de 100ms.
 
-**Etapa 1 — Geração de candidatos (recall).** De milhões para centenas. Modelos baratos, frequentemente múltiplas fontes em paralelo: busca por vizinhos aproximados sobre embeddings (two-tower), filtragem colaborativa, popularidade por segmento, regras de negócio, itens recentes. **Objetivo: recall alto** — o item certo precisa estar no conjunto. Precision aqui não importa.
+**Etapa 1 — Geração de candidatos (recall).** De milhões para centenas. Modelos baratos, frequentemente múltiplas fontes em paralelo: busca por vizinhos aproximados sobre embeddings (two-tower), filtragem colaborativa, popularidade por segmento, regras de negócio, itens recentes. **Objetivo: recall alto** — o item certo precisa estar no conjunto. Precision não é o critério da etapa, mas limita quantos candidatos o ranking caro processa (custo/latência).
 
 **Etapa 2 — Ranking.** De centenas para dezenas. Modelo caro e rico em features, que agora pode se dar ao luxo de usar interações usuário-item, contexto e features em tempo real. **Objetivo: precision no topo.**
 
@@ -233,7 +233,7 @@ Segunda observação de enquadramento: o histórico registra **vendas**, não **
 
 **Cuidado com árvores:** elas **não extrapolam**, então não conseguem prever crescimento continuado. Se há tendência, é preciso modelá-la explicitamente ou trabalhar com diferenças em vez de níveis.
 
-**Validação** — walk-forward temporal com gap correspondente ao horizonte de previsão, avaliando por fold e não só na média, porque a degradação nos folds recentes é o sinal de drift que a média esconde. Métrica: WAPE ou MASE (que compara com o baseline ingênuo), evitando MAPE por causa dos zeros e da assimetria. E **avaliar no nível de agregação em que a decisão é tomada** — um erro por SKU pode se compensar no agregado, e o que importa é o nível em que o pedido é feito.
+**Validação** — walk-forward temporal com gap correspondente ao horizonte de previsão, avaliando por fold e não só na média, porque a degradação nos folds recentes é o sinal de drift que a média esconde. Métrica: WAPE ou MASE (este último normalizado pelo baseline ingênuo), evitando MAPE por causa dos zeros e da assimetria. E **avaliar no nível de agregação em que a decisão é tomada** — um erro por SKU pode se compensar no agregado, e o que importa é o nível em que o pedido é feito.
 
 **Fechando o ciclo:** a previsão alimenta uma decisão de reposição, então a métrica final é de negócio — nível de serviço atingido, capital imobilizado, perdas. Um modelo com WAPE melhor que gera pior nível de serviço não é melhor.
 

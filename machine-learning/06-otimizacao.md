@@ -33,7 +33,7 @@ Duas observações que valem a resposta inteira:
 
 **O efeito do tamanho do batch, que é o que se pergunta:**
 
-- **Batch pequeno** → gradiente ruidoso → mais atualizações por época → **efeito regularizador**. Existe evidência empírica consistente de que batches pequenos tendem a convergir para mínimos mais "planos", associados a melhor generalização (a intuição: um mínimo plano é robusto a pequenas perturbações dos parâmetros, e a diferença entre a superfície de perda de treino e de teste é aproximadamente uma perturbação).
+- **Batch pequeno** → gradiente ruidoso → mais atualizações por época → **efeito regularizador**. Há evidência empírica de que batches pequenos tendem a convergir para mínimos mais "planos", com melhor generalização em muitos cenários (a intuição: um mínimo plano é robusto a pequenas perturbações dos parâmetros). O vínculo causal entre nitidez e generalização, porém, é debatido — a nitidez não é invariante a reparametrizações.
 - **Batch grande** → gradiente preciso → melhor uso de GPU → menos passos por época → tende a generalizar pior se você não ajustar nada. A mitigação padrão é **aumentar o learning rate junto com o batch** (as heurísticas comuns são escalar linearmente ou pela raiz quadrada) e usar **warmup**, porque no início do treino um learning rate alto com batch grande desestabiliza.
 
 Ponto importante: **batch grande não é "melhor" nem "pior" — é um trade-off entre eficiência de hardware e regularização implícita.**
@@ -107,7 +107,7 @@ Defaults: `β₁=0.9, β₂=0.999, ε=1e-8`.
 - **Cross-entropy / log-loss** — o padrão. `-Σ y log(p)`. É a verossimilhança negativa, é uma *proper scoring rule* (é minimizada pela probabilidade verdadeira, o que induz calibração), e penaliza **fortemente** previsões confiantes e erradas: quando `p → 0` para a classe correta, a perda tende a infinito.
 - **Hinge** — usada em SVM. `max(0, 1 - y·f(x))`. Zero para pontos corretamente classificados **além da margem**, o que produz esparsidade (só os vetores de suporte importam). Não produz probabilidades.
 - **Focal loss** — cross-entropy multiplicada por `(1-p_t)^γ`, o que **reduz o peso de exemplos fáceis**. Criada para detecção de objetos, onde há desbalanceamento extremo entre background e objetos, e o volume de exemplos fáceis domina o gradiente. É a resposta certa quando o problema é "muitos negativos triviais afogando o sinal".
-- **Label smoothing** — substituir alvos de 1.0 por 0.9 (e 0 por ε/K). Impede que o modelo persiga logits infinitos, melhora calibração e age como regularizador.
+- **Label smoothing** — substituir o alvo correto de 1.0 por `1−ε+ε/K` e os demais por `ε/K` (na variante que zera o alvo correto: `1−ε` e `ε/(K−1)`). Impede que o modelo persiga logits infinitos, melhora calibração e age como regularizador.
 
 **Contrastiva / triplet / InfoNCE** — para aprendizado de representações: aproxima pares similares e afasta dissimilares no espaço de embedding. É a base de embeddings modernos e de aprendizado auto-supervisionado. Ver [08](08-deep-learning-moderno.md).
 
@@ -231,7 +231,7 @@ E o teste de sanidade que eu faria antes de tudo: **conseguir overfittar um lote
 
 **Resposta modelo:** Afeta três coisas ao mesmo tempo.
 
-**Ruído do gradiente:** a variância cai proporcionalmente a `1/B`. Batch pequeno significa gradiente ruidoso, o que age como regularizador — existe evidência empírica consistente de que batches pequenos convergem para mínimos mais planos, associados a melhor generalização. A intuição é que um mínimo plano é robusto a perturbações dos parâmetros, e a diferença entre a superfície de perda de treino e de teste funciona como uma perturbação.
+**Ruído do gradiente:** a variância cai proporcionalmente a `1/B`. Batch pequeno significa gradiente ruidoso, o que age como regularizador — há evidência empírica de que batches pequenos convergem para mínimos mais planos, com melhor generalização em muitos cenários (o vínculo causal é debatido). A intuição é que um mínimo plano é robusto a perturbações dos parâmetros, e a diferença entre a superfície de perda de treino e de teste funciona como uma perturbação.
 
 **Eficiência computacional:** batches grandes usam melhor a GPU, então cada época é mais rápida em tempo de relógio, mesmo com menos atualizações.
 

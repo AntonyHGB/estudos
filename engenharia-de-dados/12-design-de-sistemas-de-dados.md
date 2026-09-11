@@ -13,7 +13,7 @@ Esta é a rodada que define o **nível da oferta**. Perguntas técnicas pontuais
 Não é a arquitetura "certa" — não existe uma. O que se avalia:
 
 1. **Você faz as perguntas certas antes de projetar?** A pergunta é deliberadamente vaga. Sair desenhando sem clarificar é o erro número um.
-2. **Você raciocina sobre escala com números?** "Muitos dados" não é análise. "500 GB/dia comprimido, 6 TB/mês, 70 TB/ano" é.
+2. **Você raciocina sobre escala com números?** "Muitos dados" não é análise. "200 GB/dia comprimido, 6 TB/mês, 70 TB/ano" é.
 3. **Você conhece os trade-offs e os assume explicitamente?** Toda escolha custa algo. Apresentar uma solução sem custo indica que você não conhece o custo.
 4. **Você prioriza?** Em 45 minutos não dá para cobrir tudo. Saber o que é essencial e o que é detalhe é sinal de senioridade.
 5. **Você pensa em falha e operação?** Júnior desenha o caminho feliz. Sênior desenha o que acontece quando o pipeline cai às 3h da manhã, e quem é acordado.

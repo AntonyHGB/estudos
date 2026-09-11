@@ -85,7 +85,7 @@ Conjunto de fenômenos contraintuitivos em alta dimensão:
 
 **Tudo fica esparso e tudo fica na "casca".** Numa hiperesfera de alta dimensão, quase todo o volume está próximo da superfície. Os dados ficam nos cantos do espaço, longe do centro e uns dos outros.
 
-**Overfitting fica trivial.** Com `p > n`, existe sempre um hiperplano que separa perfeitamente qualquer rotulação — inclusive rótulos aleatórios. Correlações espúrias com o alvo aparecem por acaso: com 10.000 features aleatórias e 100 amostras, algumas terão correlação alta com o alvo puramente por sorte. É a razão de a seleção de features precisar ser feita dentro do CV.
+**Overfitting fica trivial.** Com `p > n` e pontos em posição geral, existe um hiperplano que separa perfeitamente qualquer rotulação — inclusive rótulos aleatórios (pontos duplicados com rótulos conflitantes são a exceção). Correlações espúrias com o alvo aparecem por acaso: com 10.000 features aleatórias e 100 amostras, algumas terão correlação alta com o alvo puramente por sorte. É a razão de a seleção de features precisar ser feita dentro do CV.
 
 **Por que ML funciona apesar disso — a hipótese da variedade (manifold hypothesis).** Dados reais de alta dimensão tipicamente vivem próximos de uma variedade de dimensão intrínseca muito menor. Uma imagem de 1 megapixel tem um milhão de dimensões, mas o conjunto de imagens plausíveis ocupa uma fração infinitesimal desse espaço. **A dimensão que importa é a intrínseca, não a nominal**, e é isso que redução de dimensionalidade e representation learning exploram. Citar isso transforma uma resposta boa em uma resposta forte.
 
@@ -188,7 +188,7 @@ O efeito mais consequente é que **as distâncias se concentram**: em alta dimen
 
 A razão de ML funcionar apesar disso é a **hipótese da variedade**: dados reais de alta dimensão vivem próximos de uma variedade de dimensão intrínseca muito menor. Uma imagem tem um milhão de pixels, mas o conjunto de imagens plausíveis ocupa uma fração infinitesimal desse espaço. A dimensão que importa é a intrínseca, não a nominal — e é exatamente isso que redução de dimensionalidade e representation learning exploram.
 
-**Follow-up:** *"Como você mitiga?"* — Redução de dimensionalidade, seleção de features, regularização forte, e usar modelos com viés indutivo apropriado. Em prática moderna, o mais efetivo costuma ser usar embeddings pré-treinados, que já projetam num espaço denso de dimensão intrínseca razoável.
+**Follow-up:** *"Como você mitiga?"* — Redução de dimensionalidade, seleção de features, regularização forte, e usar modelos com viés indutivo apropriado. Na prática moderna, o mais efetivo costuma ser usar embeddings pré-treinados, que já projetam num espaço denso de dimensão intrínseca razoável.
 
 ---
 

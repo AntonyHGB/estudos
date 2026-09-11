@@ -91,7 +91,7 @@ Um detalhe frequentemente cobrado: janelas deslizantes com muita sobreposição 
 **E aqui está o ponto que separa candidatos:** exactly-once **delivery** é impossível em sistemas distribuídos, num sentido teórico rigoroso — é o problema dos dois generais. Você nunca pode ter certeza absoluta de que a mensagem chegou sem um ack, e o ack pode se perder. O que os sistemas realmente oferecem é **exactly-once processing semantics** (EOS): a mensagem pode ser *entregue* várias vezes, mas o **efeito** sobre o estado e sobre a saída acontece uma vez só.
 
 Isso é obtido combinando três mecanismos:
-1. **Deduplicação na entrada** (o produtor idempotente do Kafka atribui um ID e um número de sequência por partição, e o broker descarta duplicatas de retry).
+1. **Deduplicação na entrada** (o broker atribui um PID ao produtor idempotente, que numera as sequências por partição, e o broker descarta duplicatas de retry).
 2. **Estado e offsets commitados atomicamente** — a atualização do estado do processamento e o avanço do offset acontecem na mesma transação, então nunca ficam dessincronizados.
 3. **Escrita transacional ou idempotente no destino** — o sink precisa participar, seja com transação (Kafka como destino, via transações), seja com escrita idempotente (upsert por chave).
 
@@ -129,7 +129,7 @@ Pontos práticos que aparecem em perguntas avançadas:
 - **Frequência do checkpoint** é um trade-off: mais frequente significa menos reprocessamento na recuperação, mas mais overhead constante.
 - **Estado grande é um problema em si.** Um job com dezenas de GB de estado tem checkpoints lentos e recuperação lenta. Backends de estado que gravam em disco local com upload incremental (RocksDB no Flink) existem por isso.
 - **Mudança de código com estado** é dolorosa: se você altera a estrutura do estado, o checkpoint antigo pode ficar incompatível. Savepoints (checkpoints explícitos e versionados) existem para migração planejada.
-- **TTL de estado** é obrigatório em qualquer job que mantém estado por chave (por exemplo, sessões por usuário). Sem expiração, o estado cresce para sempre e o job morre — normalmente semanas depois de entrar em produção, quando ninguém está olhando.
+- **TTL de estado** é obrigatório em jobs que mantêm estado por chave sem expiração natural (por exemplo, sessões por usuário; janelas com watermark expiram sozinhas). Sem expiração, o estado cresce para sempre e o job morre — normalmente semanas depois de entrar em produção, quando ninguém está olhando.
 
 ---
 

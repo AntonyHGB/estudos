@@ -27,7 +27,7 @@ Três consequências decorrem disso, e são a resposta completa para "por que co
 ### 1.2 Parquet, ORC e Avro
 
 **Apache Parquet** — colunar, o padrão de fato em data lakes e lakehouses.
-- Estrutura hierárquica: arquivo → **row groups** (blocos horizontais, tipicamente 128 MB–1 GB) → **column chunks** (uma coluna dentro do row group) → **pages** (unidade de compressão e encoding, tipicamente ~1 MB).
+- Estrutura hierárquica: arquivo → **row groups** (blocos horizontais, tipicamente 128–512 MB, podendo chegar a ~1 GB em alguns engines) → **column chunks** (uma coluna dentro do row group) → **pages** (unidade de compressão e encoding, tipicamente ~1 MB).
 - Cada row group e cada page carrega **estatísticas**: min, max, contagem de nulos, e opcionalmente distinct count. É isso que permite ao engine pular blocos inteiros sem descomprimir — o mecanismo por trás do predicate pushdown eficiente.
 - Suporta estruturas aninhadas (o algoritmo de definition/repetition levels do Dremel), permitindo representar JSON complexo mantendo colunaridade.
 - Encodings: dictionary, RLE, delta, bit-packing, escolhidos automaticamente por coluna.
@@ -248,7 +248,7 @@ O custo é a ordenação na escrita, que exige um shuffle e é cara. Então vale
 
 **Avro** foi projetado em torno disso. O schema é armazenado com os dados, e a leitura usa dois schemas: o de escrita (writer) e o de leitura (reader), resolvidos por regras explícitas de compatibilidade. Adicionar campo com valor default é backward compatible — leitores novos leem dados antigos. Remover campo que tinha default é forward compatible — leitores antigos leem dados novos. Isso é o que torna Avro adequado para mensageria de longa vida, e é a base do funcionamento de um Schema Registry.
 
-**Parquet** guarda o schema no footer de cada arquivo, e a evolução é gerenciada pela camada acima. Adicionar coluna funciona: arquivos antigos não a têm e o engine devolve NULL. Remover é ignorar na leitura. Mas **renomear e mudar tipo** são os problemas: se a resolução é por nome, renomear equivale a remover e adicionar, e você perde os dados históricos daquela coluna silenciosamente.
+**Parquet** guarda o schema no footer de cada arquivo, e a evolução é gerenciada pela camada acima. Adicionar coluna funciona: arquivos antigos não a têm e o engine devolve NULL. Remover é ignorar na leitura. Mas **renomear e mudar tipo de forma incompatível** são os problemas: se a resolução é por nome, renomear equivale a remover e adicionar, e você perde os dados históricos daquela coluna silenciosamente.
 
 É exatamente por isso que formatos de tabela como Iceberg rastreiam colunas por **ID** e não por nome ou posição: renomear vira uma mudança de metadado, sem tocar nos arquivos, e reordenar colunas é seguro. Sem essa camada, evolução de schema em Parquet puro é frágil.
 

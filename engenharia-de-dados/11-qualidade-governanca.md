@@ -152,7 +152,7 @@ Não é preciso ser advogado, mas é preciso conhecer os conceitos que **restrin
 
 **Ambientes de desenvolvimento.** Copiar a base de produção para dev é uma das violações mais comuns e menos discutidas. A solução é dado sintético ou mascarado — e mascarar preservando integridade referencial e distribuição estatística é um problema técnico não trivial.
 
-**Diferenças entre LGPD e GDPR** que valem mencionar: são muito similares em estrutura e princípios; a LGPD tem dez bases legais (contra seis do GDPR), sanções com teto de 2% do faturamento no Brasil limitado a R$ 50 milhões por infração (contra até 4% do faturamento global no GDPR), e a autoridade brasileira é a ANPD. Para engenharia, as implicações práticas são essencialmente as mesmas.
+**Diferenças entre LGPD e GDPR** que valem mencionar: são muito similares em estrutura e princípios; a LGPD tem dez bases legais (contra seis do GDPR), sanções com teto de 2% do faturamento no Brasil limitado a R$ 50 milhões por infração (contra até € 20 milhões ou 4% do faturamento global anual no GDPR, o que for maior), e a autoridade brasileira é a ANPD. Para engenharia, as implicações práticas são essencialmente as mesmas.
 
 ---
 

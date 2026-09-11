@@ -130,4 +130,4 @@ Cinco hábitos que valem mais que qualquer conteúdo específico:
 
 ## Nota sobre versões
 
-O material reflete o estado do ecossistema em 2026: Kafka em modo KRaft (ZooKeeper removido a partir do Kafka 4.0), Spark 3.x/4.x com AQE ligado por padrão desde a 3.2, Airflow 3 com asset-aware scheduling e DAG versioning, e Apache Iceberg como formato de tabela padrão em lakehouses novos. Detalhes de versão mudam; os conceitos por trás, não. Nas entrevistas, priorize demonstrar o conceito e sinalize quando estiver falando de um comportamento específico de versão.
+O material reflete o estado do ecossistema em 2026: Kafka em modo KRaft (ZooKeeper removido a partir do Kafka 4.0), Spark 3.x/4.x com AQE ligado por padrão desde a 3.2, Airflow 3 com asset-aware scheduling e DAG versioning, e Apache Iceberg como baseline predominante na avaliação de formatos de lakehouse (não uma resposta automática). Detalhes de versão mudam; os conceitos por trás, não. Nas entrevistas, priorize demonstrar o conceito e sinalize quando estiver falando de um comportamento específico de versão.

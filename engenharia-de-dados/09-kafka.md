@@ -75,7 +75,7 @@ Cada partição tem um **líder** e N-1 **followers** (o fator de replicação).
 
 **`min.insync.replicas` no tópico/broker:** o número mínimo de réplicas que precisam estar no ISR para que uma escrita com `acks=all` seja aceita. Se cair abaixo, o produtor recebe erro em vez de escrever com durabilidade insuficiente.
 
-**A combinação correta:** `replication.factor=3` + `min.insync.replicas=2` + `acks=all`. Isso significa: pelo menos duas cópias antes de confirmar, e você tolera a perda de um broker continuando a aceitar escritas. Se usar `min.insync.replicas=3` com fator 3, a perda de qualquer broker **para as escritas** — o que troca disponibilidade por durabilidade e raramente é o desejado.
+**A combinação correta:** `replication.factor=3` + `min.insync.replicas=2` + `acks=all`. Isso significa: pelo menos duas cópias antes de confirmar, e você tolera a perda de um broker continuando a aceitar escritas. Se usar `min.insync.replicas=3` com fator 3, a perda de qualquer broker **interrompe as escritas** — o que troca disponibilidade por durabilidade e raramente é o desejado.
 
 **`unclean.leader.election.enable`**: se `true`, permite que uma réplica fora do ISR vire líder quando não há nenhuma no ISR. Isso mantém a disponibilidade ao custo de **perder mensagens** que existiam apenas nas réplicas mais atualizadas. É a escolha CAP explícita do Kafka: `false` (padrão moderno) é CP, `true` é AP. Excelente resposta para conectar Kafka ao teorema CAP.
 
@@ -317,7 +317,7 @@ O ponto operacional crítico: **monitorar o slot de replicação**. Se o conecto
 
 **Snapshot inicial.** O Debezium faz um snapshot consistente e depois continua do ponto correspondente do log. É a parte mais delicada, e em tabelas grandes vale usar snapshot incremental para não bloquear nem gerar um pico enorme.
 
-**Transporte.** Retenção do tópico dimensionada para cobrir a janela de reprocessamento que eu quero suportar. Schema Registry com Avro e compatibilidade backward, para que uma mudança de DDL na origem não quebre os consumidores silenciosamente.
+**Transporte.** Retenção do tópico dimensionada para cobrir a janela de reprocessamento que eu quero suportar. Schema Registry com Avro e compatibilidade forward (ou full), para que uma mudança de DDL na origem não quebre consumidores que ainda usam o schema antigo — com backward, seria preciso atualizar os consumidores primeiro.
 
 **Ingestão no lake.** Um sink escrevendo em formato de tabela transacional. E aqui uma decisão explícita: escrevo o **histórico de mudanças** append-only, com o tipo de operação e o timestamp, como camada bruta; e derivo dele o **estado atual** via MERGE por chave primária, numa camada seguinte. Manter os dois é o que permite tanto reconstruir o presente quanto atender auditoria e construir SCD Tipo 2 depois.
 
@@ -351,7 +351,7 @@ Para uma migração real, o que eu observaria é a versão mínima suportada e o
 
 **Configurar `acks=all` sem `min.insync.replicas`.** Se o ISR encolher para uma réplica, `acks=all` significa "espere essa única réplica", e a durabilidade prometida não existe.
 
-**Usar `min.insync.replicas` igual ao fator de replicação.** A perda de qualquer broker para as escritas.
+**Usar `min.insync.replicas` igual ao fator de replicação.** A perda de qualquer broker interrompe as escritas.
 
 **Tratar Kafka como banco de dados.** Ele é um log; consulta por chave arbitrária, query analítica e atualização pontual não são o modelo. Materialize num banco ou numa tabela para isso.
 

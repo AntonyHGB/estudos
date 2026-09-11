@@ -7,6 +7,10 @@ Material conceitual para entrevistas técnicas, com site estático gerado a part
 | [Engenharia de Dados](engenharia-de-dados/) | 12 | 172 | 96 |
 | [Machine Learning](machine-learning/) | 12 | 121 | 96 |
 
+> As "questões abertas" e o quiz são contados como o site os apresenta: incluem os cenários resolvidos de Engenharia de Dados e os estudos de caso/perguntas de calibração do ML System Design. O quiz de cada área tem 96 questões.
+
+> As "questões abertas" e o quiz são contados como o site os apresenta: incluem os cenários resolvidos de Engenharia de Dados e os estudos de caso/perguntas de calibração do ML System Design. O quiz de cada área tem 96 questões.
+
 ## Como funciona
 
 Os arquivos `.md` são a fonte de verdade do conteúdo, e cada `quiz.json` guarda as questões
@@ -90,7 +94,7 @@ node balancear-quiz.mjs engenharia-de-dados machine-learning
 ```
 
 Escrevendo questão é natural deixar a correta sempre na mesma posição — e aí dá para gabaritar
-marcando sempre a mesma letra. O script troca a correta de lugar seguindo um padrão fixo, o que
+marcando sempre a mesma letra. O script troca a correta de lugar seguindo um padrão rotacionado por área e tema, o que
 dá 25% por letra. É troca de pares: nenhum texto muda.
 
 ### Auditoria automática

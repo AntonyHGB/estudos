@@ -20,7 +20,7 @@ O que um orquestrador entrega além do cron:
 
 ### 1.2 DAG, tarefas e o modelo de execução
 
-Um **DAG** é a definição do fluxo: tarefas e suas dependências, sem ciclos. No Airflow, é código Python que **descreve** o grafo — não que executa o trabalho. Essa distinção é a fonte de vários erros: código no corpo do DAG roda a cada parse do arquivo, que acontece a cada poucos segundos no scheduler, para todos os DAGs. Fazer uma consulta a banco ou chamada de API no nível do módulo é um erro clássico e custoso.
+Um **DAG** é a definição do fluxo: tarefas e suas dependências, sem ciclos. No Airflow, é código Python que **descreve** o grafo — não que executa o trabalho. Essa distinção é a fonte de vários erros: código no corpo do DAG roda a cada parse do arquivo, que acontece a cada poucos segundos no **DAG processor** (no Airflow 3 é um componente separado do scheduler), para todos os DAGs. Fazer uma consulta a banco ou chamada de API no nível do módulo é um erro clássico e custoso.
 
 Componentes:
 - **Operator**: o modelo de uma tarefa (executar SQL, rodar um container, chamar uma API).
@@ -34,9 +34,9 @@ Componentes:
 
 ### 1.3 Data interval — o conceito que mais confunde
 
-O Airflow agenda por **intervalo de dados**, não por instante. Um DAG diário com intervalo `2026-08-13 00:00` a `2026-08-14 00:00` **só é disparado no fim do intervalo**, ou seja, à meia-noite de 14.
+O Airflow agenda por **intervalo de dados** ou por **trigger de cron**, e o default mudou na versão 3. No modelo clássico de data interval (default do Airflow 2; na 3 exige `create_cron_data_intervals=True` ou uma timetable explícita), um DAG diário com intervalo `2026-08-13 00:00` a `2026-08-14 00:00` **só é disparado no fim do intervalo**, ou seja, à meia-noite de 14. Isso é intencional: o pipeline processa o dia 13, e o dia 13 só está completo depois que ele termina.
 
-Isso é intencional e correto: o pipeline processa o dia 13, e o dia 13 só está completo depois que ele termina. O nome antigo dessa ideia, `execution_date`, era péssimo e causou anos de confusão, porque parecia ser "quando rodou" quando na verdade era "o início do período processado". Versões modernas usam `data_interval_start` e `data_interval_end`, que são explícitos.
+No **Airflow 3**, cron puro usa `CronTriggerTimetable` por padrão (`create_cron_data_intervals=False`): o run dispara no horário do cron e `data_interval_start == data_interval_end == logical_date` — não existe a janela do dia anterior. Ao responder, diga qual dos dois modelos está em jogo. O nome antigo dessa ideia, `execution_date`, era péssimo e causou anos de confusão, porque parecia ser "quando rodou" quando na verdade era "o início do período processado". Versões modernas usam `data_interval_start` e `data_interval_end`, que são explícitos.
 
 **Por que isso importa para o seu código:** a tarefa deve usar o intervalo como parâmetro em toda a lógica — filtrar a origem por `data_interval_start` e `data_interval_end`, e escrever na partição correspondente. Se ela usa `now()` ou `current_date`, ela deixa de ser reexecutável no passado, e backfill passa a produzir resultado errado (todas as execuções processariam o dia de hoje). Esta é a conexão direta entre Airflow e o conceito de idempotência do arquivo 03.
 
@@ -62,14 +62,14 @@ O padrão correto é passar **referências**: a tarefa A escreve o resultado em 
 
 ### 1.6 Executores e escalabilidade
 
-- **SequentialExecutor**: uma tarefa por vez. Só para desenvolvimento.
+- **SequentialExecutor (removido no Airflow 3)**: uma tarefa por vez; use `LocalExecutor` com paralelismo 1 para o equivalente em desenvolvimento.
 - **LocalExecutor**: processos paralelos numa máquina. Suficiente para cargas pequenas e médias.
 - **CeleryExecutor**: workers distribuídos com fila de mensagens. O padrão histórico para escala, com workers de longa duração.
 - **KubernetesExecutor**: cada tarefa roda num pod próprio. Isolamento total, dependências por tarefa, escala elástica. O custo é latência de inicialização do pod, o que pesa quando as tarefas são muito curtas.
 - **CeleryKubernetesExecutor / híbridos**: rotear tarefas curtas para Celery e pesadas para Kubernetes.
 
 **Gargalos típicos do Airflow**, que rendem boas respostas de troubleshooting:
-- **Tempo de parse dos DAGs.** O scheduler reprocessa os arquivos periodicamente. Código pesado no nível do módulo, importações lentas ou centenas de arquivos deixam o scheduler lento e atrasam todo o agendamento.
+- **Tempo de parse dos DAGs.** O DAG processor reprocessa os arquivos periodicamente. Código pesado no nível do módulo, importações lentas ou centenas de arquivos deixam o scheduler lento e atrasam todo o agendamento.
 - **Banco de metadados.** Ele é o coração do Airflow. XComs grandes, histórico não limpo e muitas task instances degradam tudo. Limpeza periódica de registros antigos é manutenção obrigatória.
 - **Concorrência mal configurada.** Paralelismo global, por DAG, por tarefa e por pool interagem, e o limite efetivo é o menor deles — o que causa a confusão de "aumentei os workers e não melhorou".
 - **Sensores ocupando slots.** Muitos sensores em modo poke consomem todos os slots disponíveis e travam o cluster esperando; modo reschedule ou deferrable operators resolvem.
@@ -90,7 +90,7 @@ O padrão correto é passar **referências**: a tarefa A escreve o resultado em 
 
 **Dependências declaradas, não implícitas por horário.** Se o DAG B precisa do resultado do DAG A, expresse isso — por dataset/asset, ou por um sensor que verifica a condição real —, não colocando B uma hora depois de A.
 
-**Alertar em SLA, não só em falha.** Um pipeline que termina 6 horas atrasado quebra o consumidor tanto quanto um que falha, e não gera alerta se você só monitora estado final.
+**Alertar por atraso, não só por falha.** Um pipeline que termina 6 horas atrasado quebra o consumidor tanto quanto um que falha, e não gera alerta se você só monitora estado final. No Airflow 3, o recurso de SLA foi removido e substituído pelas **Deadline Alerts** (3.1).
 
 **Configuração e segredos fora do código.** Connections, Variables e um backend de secrets. Credencial em código versionado é um achado de auditoria garantido.
 
@@ -222,13 +222,13 @@ E confirmaria se há mais de uma instância de scheduler, que é suportado e aju
 
 **Granularidade por domínio.** DAGs por domínio de negócio ou por fonte, de tamanho compreensível — dezenas de tarefas, não centenas. Isso permite reprocessar uma parte sem tocar no resto e mantém o raio de explosão de uma falha pequeno.
 
-**Padronização por fábrica de DAGs.** Com 200 pipelines, escrever cada um à mão gera divergência. Uma camada de geração a partir de configuração declarativa (YAML, ou uma função factory) garante que todos tenham retry, alerta, SLA, ownership e convenções de nomenclatura consistentes. O cuidado é que geração dinâmica de DAG pesa no parse, então a configuração precisa ser barata de ler.
+**Padronização por fábrica de DAGs.** Com 200 pipelines, escrever cada um à mão gera divergência. Uma camada de geração a partir de configuração declarativa (YAML, ou uma função factory) garante que todos tenham retry, alerta por atraso (Deadline Alerts no Airflow 3), ownership e convenções de nomenclatura consistentes. O cuidado é que geração dinâmica de DAG pesa no parse, então a configuração precisa ser barata de ler.
 
 **Isolamento de recursos.** Pools por sistema de origem, para que um backfill não derrube o banco que outros dez pipelines usam. Prioridades para o que é crítico.
 
 **Ownership e SLA por pipeline.** Com 200 pipelines, "o time de dados" não é dono útil — cada um precisa de um responsável nomeado e de um SLA declarado, senão nada é priorizado quando várias coisas quebram ao mesmo tempo.
 
-**Observabilidade agregada.** Um painel que responde "o que está atrasado e quem depende disso", não 200 DAGs para olhar um a um. Alerta por SLA violado, não só por falha.
+**Observabilidade agregada.** Um painel que responde "o que está atrasado e quem depende disso", não 200 DAGs para olhar um a um. Alerta por atraso (Deadline Alert), não só por falha.
 
 ---
 
@@ -308,7 +308,7 @@ A confusão surge porque ambos falam em DAG. A distinção que eu usaria é: dbt
 
 **Dependência implícita por horário.** "Roda às 7h porque o outro roda às 6h" não é dependência. Declare por dataset/asset ou use sensor.
 
-**Monitorar apenas falha, não atraso.** Um pipeline que termina 6 horas atrasado quebra o consumidor e não gera alerta nenhum sem SLA.
+**Monitorar apenas falha, não atraso.** Um pipeline que termina 6 horas atrasado quebra o consumidor e não gera alerta nenhum sem um deadline configurado.
 
 **Tarefas não idempotentes com retry ligado.** O retry automático duplica dados. É o combo mais destrutivo e mais comum.
 

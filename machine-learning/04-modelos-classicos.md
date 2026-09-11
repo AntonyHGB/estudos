@@ -14,7 +14,7 @@ Modela `y = w·x + b`, ajustando `w` para minimizar o erro quadrático. Tem solu
 **As suposições** (cobradas com frequência, e o valor está em saber **o que cada violação quebra**):
 
 1. **Linearidade** nos parâmetros — a relação entre features e alvo é linear. Violar isso gera bias; a correção é adicionar termos polinomiais, interações ou transformações (log).
-2. **Independência dos resíduos** — violada em séries temporais e dados agrupados. Não enviesa os coeficientes, mas **subestima os erros-padrão**, então seus p-valores e intervalos de confiança ficam otimistas demais.
+2. **Independência dos resíduos** — violada em séries temporais e dados agrupados. Não enviesa os coeficientes, mas **tipicamente subestima os erros-padrão** (autocorrelação positiva; negativa pode superestimá-los), então seus p-valores e intervalos de confiança ficam otimistas demais.
 3. **Homocedasticidade** — variância constante dos resíduos. Violar não enviesa os coeficientes, mas invalida a inferência. Corrige-se com erros-padrão robustos ou transformando o alvo.
 4. **Normalidade dos resíduos** — necessária apenas para inferência exata em amostras pequenas. Em amostras grandes o TCL cobre. **Não é necessária para a estimativa dos coeficientes.**
 5. **Ausência de multicolinearidade perfeita** — com colinearidade alta, os coeficientes ficam instáveis e com erros-padrão enormes, mas as **previsões continuam boas**.
@@ -33,7 +33,7 @@ log( p / (1-p) ) = w·x + b        ⟺        p = σ(w·x + b) = 1 / (1 + e^(-(w
 
 **Por que a sigmoide e não uma reta?** Porque probabilidade tem que estar em [0,1] e uma função linear não respeita isso. A sigmoide é a inversa da função logit, que mapeia (0,1) para toda a reta real. E há uma razão mais profunda: a logística é o **modelo linear generalizado canônico para a distribuição de Bernoulli** — a log-odds é a *link function* natural, o que dá à escolha uma justificativa teórica em vez de conveniência.
 
-**Interpretação dos coeficientes** (cobrada muito):`w_j` é a mudança na **log-odds** para um aumento unitário em `x_j`, mantendo o resto constante. `exp(w_j)` é a **razão de chances (odds ratio)**: se `exp(w_j) = 1.5`, a chance aumenta 50% por unidade da feature. **`w_j` NÃO é a mudança na probabilidade** — o efeito na probabilidade depende de onde você está na curva (é máximo perto de `p = 0.5` e quase nulo nos extremos). Errar isso é comum e é um sinal ruim.
+**Interpretação dos coeficientes** (cobrada muito): `w_j` é a mudança na **log-odds** para um aumento unitário em `x_j`, mantendo o resto constante. `exp(w_j)` é a **razão de chances (odds ratio)**: se `exp(w_j) = 1.5`, a chance aumenta 50% por unidade da feature. **`w_j` NÃO é a mudança na probabilidade** — o efeito na probabilidade depende de onde você está na curva (é máximo perto de `p = 0.5` e quase nulo nos extremos). Errar isso é comum e é um sinal ruim.
 
 **Por que log-loss e não MSE?** Duas razões, e a segunda é a que separa candidatos:
 
@@ -181,7 +181,7 @@ Uma segunda limitação estrutural é que as fronteiras são paralelas aos eixos
 
 **🟡 Explique a diferença entre bagging e boosting.**
 
-**Resposta modelo:** Bagging treina modelos **em paralelo** em amostras bootstrap e agrega por média ou voto. Ele reduz **variância** — a média de modelos ruidosos e descorrelacionados é mais estável que qualquer um deles. Por isso os modelos-base devem ser de baixa polarização e alta variância: árvores profundas.
+**Resposta modelo:** Bagging treina modelos **em paralelo** em amostras bootstrap e agrega por média ou voto. Ele reduz **variância** — a média de modelos ruidosos e descorrelacionados é mais estável que qualquer um deles. Por isso os modelos-base devem ser de baixo bias e alta variância: árvores profundas.
 
 Boosting treina modelos **sequencialmente**, cada um focando nos erros do anterior, e soma-os. Ele reduz principalmente **bias** — parte de aprendizes fracos, árvores rasas, e os compõe numa função forte.
 

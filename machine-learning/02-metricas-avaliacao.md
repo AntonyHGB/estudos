@@ -38,7 +38,7 @@ Todas as métricas de classificação são funções dessas quatro células. Se 
 
 **F1** = média harmônica de precision e recall = `2PR / (P + R)`. Usa-se média **harmônica** e não aritmética porque a harmônica pune desequilíbrio: com P=1.0 e R=0.0, a média aritmética daria 0.5 (parece razoável, mas o modelo é inútil) enquanto a F1 dá 0. F1 força as duas a serem decentes.
 
-**F-beta** = `(1+β²)·P·R / (β²·P + R)`. Generaliza F1 permitindo ponderar. **β > 1 favorece recall** (F2 é comum em medicina e fraude), **β < 1 favorece precision** (F0.5). Regra de leitura: β é quantas vezes recall vale mais que precision. Citar F-beta em entrevista é um sinal forte, porque mostra que você entende que F1 embute a suposição — geralmente falsa — de que os dois erros custam o mesmo.
+**F-beta** = `(1+β²)·P·R / (β²·P + R)`. Generaliza F1 permitindo ponderar. **β > 1 favorece recall** (F2 é comum em medicina e fraude), **β < 1 favorece precision** (F0.5). Regra de leitura: β² é o peso relativo de recall (β=2 ⇒ recall pesa 4×); β>1 favorece recall, β<1 favorece precision. Citar F-beta em entrevista é um sinal forte, porque mostra que você entende que F1 embute a suposição — geralmente falsa — de que os dois erros custam o mesmo.
 
 ### 1.4 O trade-off precision-recall e o limiar
 

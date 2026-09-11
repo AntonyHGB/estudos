@@ -172,7 +172,7 @@ Uso L1 quando quero seleção automática de features, quando suspeito que a mai
 
 Descartadas essas, eu trato como variância: primeiro tento curvas de aprendizado para saber se mais dados resolveriam — se a curva de validação ainda está descendo com mais dados, coletar dados é o melhor investimento. Se não, aumento a regularização progressivamente, reduzo a capacidade do modelo, e uso early stopping. Simplificar features também: com poucos exemplos e muitas features, o overfitting é quase garantido.
 
-**Follow-up:** *"E se, depois de tudo, a lacuna persistir?"* — Aceito e reporto honestamente. Uma lacuna pequena e estável é normal; o que importa é o erro de validação absoluto, não a lacuna. Um modelo com 0.85 de treino e 0.84 de validação é pior que um com 0.95 de treino e 0.90 de validação, mesmo tendo lacuna menor. **A lacuna é diagnóstico, não é métrica de objetivo.**
+**Follow-up:** *"E se, depois de tudo, a lacuna persistir?"* — Aceito e reporto honestamente. Uma lacuna pequena e estável é normal; o que importa é o desempenho de validação absoluto, não a lacuna. Um modelo com 0.85 de acurácia no treino e 0.84 na validação é pior que um com 0.95 e 0.90, mesmo tendo lacuna menor. **A lacuna é diagnóstico, não é métrica de objetivo.**
 
 ---
 
@@ -228,7 +228,7 @@ Dito isso, na prática existem defaults muito razoáveis por tipo de dado, e eu 
 
 **Resposta modelo:** Com 500 rótulos, meu inimigo principal é variância, então todas as decisões vão nessa direção.
 
-Primeiro, **validação antes de tudo**: com 500 exemplos, um único split de validação é ruído puro. Eu usaria k-fold repetido ou até leave-one-out, e reportaria intervalos, não pontos. Sem isso, toda decisão seguinte é chute.
+Primeiro, **validação antes de tudo**: com 500 exemplos, um único split de validação é ruído puro. Eu usaria k-fold repetido (leave-one-out fica para n muito pequeno, pelo custo e pela variância alta), e reportaria intervalos, não pontos. Sem isso, toda decisão seguinte é chute.
 
 Segundo, aproveitar os não rotulados. As opções por ordem de custo-benefício: (a) **pré-treinamento auto-supervisionado** ou uso de um modelo de fundação já pré-treinado no domínio, extraindo embeddings e treinando só um classificador leve por cima — quase sempre o maior ganho por esforço; (b) **pseudo-labeling** com limiar de confiança alto e iterativo, sabendo que ele amplifica os próprios erros e precisa de controle; (c) **active learning** — usar o modelo para escolher quais 200 exemplos adicionais rotular, priorizando os de maior incerteza ou maior representatividade, o que costuma valer muito mais que 200 rótulos aleatórios.
 

@@ -5,8 +5,9 @@
 // Por que existe: escrevendo as questões é natural deixar a correta sempre na
 // mesma posição, e aí dá para gabaritar o quiz marcando sempre a mesma letra.
 // Este script troca a correta de lugar com a alternativa que ocupa uma posição
-// alvo, seguindo um padrão fixo por índice dentro do tema. Como o padrão usa
-// cada posição duas vezes a cada oito questões, o resultado é 25% por letra.
+// alvo. O padrão base usa cada posição duas vezes a cada oito questões (25% por
+// letra) e é ROTACIONADO por área e tema: sem isso, "Q1 = A" valeria para todos
+// os temas e o gabarito voltaria a ser previsível entre temas.
 //
 // É troca de pares: nenhum texto de enunciado, alternativa ou explicação muda.
 //
@@ -21,6 +22,15 @@ const ROOT = new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$
 
 // Duas ocorrências de cada posição a cada 8 questões = 25% por letra.
 const PADRAO = [0, 2, 3, 1, 2, 0, 1, 3];
+
+// Rotaciona o padrão de forma determinística por área + tema. A rotação
+// preserva as duas ocorrências de cada posição, mas faz cada tema começar numa
+// posição diferente (e ED/ML não compartilharem a mesma sequência).
+function padraoDa(area, tema) {
+  const seed = [...`${area}:${tema}`].reduce((h, c) => (h * 31 + c.codePointAt(0)) >>> 0, 17);
+  const offset = seed % PADRAO.length;
+  return PADRAO.map((_, i) => PADRAO[(i + offset) % PADRAO.length]);
+}
 
 // Pega "opção B", "alternativa C", "letra A", "a opção D)" e afins.
 const CITA_LETRA =
@@ -66,9 +76,10 @@ for (const area of areas) {
 
   // 2. Troca em pares: a correta vai para a posição alvo, e quem estava lá assume a antiga.
   let trocas = 0;
-  for (const questoes of Object.values(banco)) {
+  for (const [tema, questoes] of Object.entries(banco)) {
+    const padrao = padraoDa(area, tema);
     questoes.forEach((q, i) => {
-      const alvo = PADRAO[i % PADRAO.length];
+      const alvo = padrao[i % padrao.length];
       if (alvo >= q.a.length) return; // questão com menos alternativas que o padrão exige
       if (q.c === alvo) return;
       const tmp = q.a[alvo];

@@ -181,7 +181,7 @@ Na ordem que eu tentaria: **primeiro mudar a métrica e o limiar** — muita coi
 
 As regras que não quebro: reamostragem só no treino, nunca em validação e teste, porque eles precisam refletir a distribuição real; dentro do CV e não antes; e sabendo que ela **quebra a calibração** — se eu precisar de probabilidades, recalibro depois.
 
-**Follow-up:** *"Quando SMOTE falha?"* — Em alta dimensão, porque interpolar em espaço esparso gera pontos em regiões implausíveis do espaço de features; com categóricas, porque interpolação não faz sentido — precisa da variante SMOTE-NC; e quando há ruído na classe minoritária, porque interpolar a partir de um outlier gera exemplos sintéticos dentro do território da majoritária, borrando a fronteira. Em muitos casos práticos class weights performa igual ou melhor com muito menos complexidade.
+**Follow-up:** *"Quando SMOTE falha?"* — Em alta dimensão, porque interpolar em espaço esparso gera pontos em regiões implausíveis do espaço de features; com categóricas, porque interpolação não faz sentido — precisa da variante SMOTE-NC; e quando há ruído na classe minoritária, porque interpolar a partir de um outlier gera exemplos sintéticos dentro do território da majoritária, borrando a fronteira. Em muitos casos práticos class weights performam igual ou melhor com muito menos complexidade.
 
 ---
 
