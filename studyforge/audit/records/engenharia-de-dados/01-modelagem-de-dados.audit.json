@@ -1,0 +1,633 @@
+{
+  "schemaVersion": 1,
+  "topic": {
+    "id": "topic-a9e7f9714a1cba3d7b8c",
+    "source": {
+      "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+      "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+      "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+    }
+  },
+  "reviewedAt": "2026-10-07",
+  "coverage": {
+    "completeTopicReview": false,
+    "scope": "Amostra seletiva de claims de ED01; não revisão integral dos 24 tópicos."
+  },
+  "sourceHierarchy": [
+    "official-doc",
+    "spec",
+    "original-paper",
+    "vendor",
+    "canonical-book",
+    "secondary"
+  ],
+  "claims": [
+    {
+      "id": "grain",
+      "text": "**Grão (grain)** é o conceito mais importante e o mais negligenciado. O grão é a definição precisa do que representa **uma linha** da tabela fato. \"Uma linha por item de pedido\" é diferente de \"uma linha por pedido\", e escolher errado quebra tudo depois. Declarar o grão é a primeira coisa que se faz ao modelar — antes de escolher dimensões, antes de escolher métricas. Numa entrevista, se o entrevistador pede para modelar algo e você começa dizendo \"primeiro eu defino o grão da fato como...\", você já se diferenciou.",
+      "status": "VERIFIED",
+      "justification": "A precedência de declarar o grão antes de dimensões e fatos é sustentada, no contexto da orientação de modelagem.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 6875,
+          "end": 6990,
+          "startLine": 73,
+          "endLine": 73
+        },
+        "contextSpan": {
+          "start": 6620,
+          "end": 7140,
+          "startLine": 73,
+          "endLine": 73
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "canonical-book",
+          "url": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/",
+          "title": "Grain",
+          "checkedAt": "2026-10-07",
+          "locator": "Grain declaration"
+        }
+      ],
+      "evidence": {
+        "excerpt": "The grain must be declared before choosing dimensions or facts",
+        "excerptKind": "paraphrase",
+        "locator": "Grain declaration"
+      },
+      "review": {
+        "checkedAt": "2026-10-07",
+        "method": "Confronto da assertion delimitada com a fonte externa; excerpt identificado como paráfrase quando não citação literal.",
+        "responsibility": "Pesquisa — 2026-10-07"
+      },
+      "proposedChanges": [],
+      "assertion": "Declarar o grão é a primeira coisa que se faz ao modelar — antes de escolher dimensões, antes de escolher métricas.",
+      "verifiedScope": "Declarar o grão é a primeira coisa que se faz ao modelar — antes de escolher dimensões, antes de escolher métricas.",
+      "context": "**Grão (grain)** é o conceito mais importante e o mais negligenciado. O grão é a definição precisa do que representa **uma linha** da tabela fato. \"Uma linha por item de pedido\" é diferente de \"uma linha por pedido\", e escolher errado quebra tudo depois. Declarar o grão é a primeira coisa que se faz ao modelar — antes de escolher dimensões, antes de escolher métricas. Numa entrevista, se o entrevistador pede para modelar algo e você começa dizendo \"primeiro eu defino o grão da fato como...\", você já se diferenciou.",
+      "statement": "Declarar o grão antes de escolher dimensões e métricas."
+    },
+    {
+      "id": "semi-additive",
+      "text": "- **Semi-aditiva**: pode somar em algumas dimensões, mas não em tempo (`saldo_conta` — somar saldos de contas diferentes no mesmo dia faz sentido; somar o saldo da mesma conta em dias diferentes não).",
+      "status": "VERIFIED",
+      "justification": "A fonte sustenta aditividade em algumas dimensões, mas não em todas; não se usa isso para verificar o exemplo específico de saldo.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 8166,
+          "end": 8215,
+          "startLine": 83,
+          "endLine": 83
+        },
+        "contextSpan": {
+          "start": 8146,
+          "end": 8346,
+          "startLine": 83,
+          "endLine": 83
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "canonical-book",
+          "url": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/additive-semi-additive-non-additive-fact/",
+          "title": "Additive, Semi-Additive, and Non-Additive Facts",
+          "checkedAt": "2026-10-07",
+          "locator": "Semi-additive facts"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Measures can be additive across some dimensions but not all.",
+        "excerptKind": "paraphrase",
+        "locator": "Semi-additive facts"
+      },
+      "review": {
+        "checkedAt": "2026-10-07",
+        "method": "Confronto da assertion delimitada com a fonte externa; excerpt identificado como paráfrase quando não citação literal.",
+        "responsibility": "Pesquisa — 2026-10-07"
+      },
+      "proposedChanges": [],
+      "assertion": "pode somar em algumas dimensões, mas não em tempo",
+      "verifiedScope": "pode somar em algumas dimensões",
+      "context": "- **Semi-aditiva**: pode somar em algumas dimensões, mas não em tempo (`saldo_conta` — somar saldos de contas diferentes no mesmo dia faz sentido; somar o saldo da mesma conta em dias diferentes não).",
+      "statement": "Medidas semi-aditivas podem somar em algumas dimensões."
+    },
+    {
+      "id": "ratio-additivity",
+      "text": "- **Não-aditiva**: não pode somar em nenhuma dimensão (percentuais, taxas, ratios). A regra prática é armazenar numerador e denominador separadamente como métricas aditivas e calcular o ratio na consulta — nunca armazenar a média pré-calculada, porque média de médias está errada quando os grupos têm tamanhos diferentes.",
+      "status": "VERIFIED",
+      "justification": "Ratios são não aditivos; componentes aditivos podem ser somados antes do cálculo final. A frase ampla sobre qualquer média pré-calculada não foi incluída como claim verificado.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 8366,
+          "end": 8430,
+          "startLine": 84,
+          "endLine": 84
+        },
+        "contextSpan": {
+          "start": 8347,
+          "end": 8668,
+          "startLine": 84,
+          "endLine": 84
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "canonical-book",
+          "url": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/additive-semi-additive-non-additive-fact/",
+          "title": "Additive, Semi-Additive, and Non-Additive Facts",
+          "checkedAt": "2026-10-07",
+          "locator": "Non-additive facts"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Ratios are non-additive; add the components before calculating the final ratio.",
+        "excerptKind": "paraphrase",
+        "locator": "Non-additive facts"
+      },
+      "review": {
+        "checkedAt": "2026-10-07",
+        "method": "Confronto da assertion delimitada com a fonte externa; excerpt identificado como paráfrase quando não citação literal.",
+        "responsibility": "Pesquisa — 2026-10-07"
+      },
+      "proposedChanges": [],
+      "assertion": "não pode somar em nenhuma dimensão (percentuais, taxas, ratios).",
+      "verifiedScope": "ratios",
+      "context": "- **Não-aditiva**: não pode somar em nenhuma dimensão (percentuais, taxas, ratios). A regra prática é armazenar numerador e denominador separadamente como métricas aditivas e calcular o ratio na consulta — nunca armazenar a média pré-calculada, porque média de médias está errada quando os grupos têm tamanhos diferentes.",
+      "statement": "Ratios não são aditivos."
+    },
+    {
+      "id": "type-1",
+      "text": "**Tipo 1 — Overwrite.** Sobrescreve o valor antigo. Sem histórico. Simples e barato.",
+      "status": "VERIFIED",
+      "justification": "Type 1 sobrescreve o valor anterior e destrói o histórico, segundo a fonte consultada.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 12878,
+          "end": 12920,
+          "startLine": 133,
+          "endLine": 133
+        },
+        "contextSpan": {
+          "start": 12854,
+          "end": 12938,
+          "startLine": 133,
+          "endLine": 133
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "canonical-book",
+          "url": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/type-1/",
+          "title": "Type 1",
+          "checkedAt": "2026-10-07",
+          "locator": "Type 1"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Old attribute value overwritten; destroys history.",
+        "excerptKind": "paraphrase",
+        "locator": "Type 1"
+      },
+      "review": {
+        "checkedAt": "2026-10-07",
+        "method": "Confronto da assertion delimitada com a fonte externa; excerpt identificado como paráfrase quando não citação literal.",
+        "responsibility": "Pesquisa — 2026-10-07"
+      },
+      "proposedChanges": [],
+      "assertion": "Sobrescreve o valor antigo. Sem histórico.",
+      "verifiedScope": "Sobrescreve o valor antigo. Sem histórico.",
+      "context": "**Tipo 1 — Overwrite.** Sobrescreve o valor antigo. Sem histórico. Simples e barato.",
+      "statement": "Type 1 sobrescreve o valor antigo e não preserva histórico."
+    },
+    {
+      "id": "type-2-row",
+      "text": "**Tipo 2 — Add new row.** A mudança gera uma **nova linha** na dimensão, com nova surrogate key. Colunas de controle: `data_inicio_validade`, `data_fim_validade`, `flag_registro_atual`, e frequentemente `versao`. A chave natural se repete entre as versões; a surrogate key é única.",
+      "status": "VERIFIED",
+      "justification": "A criação de novo registro/linha e nova surrogate key em Type 2 é sustentada; este status não cobre cada coluna de controle descrita no parágrafo.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 13414,
+          "end": 13484,
+          "startLine": 137,
+          "endLine": 137
+        },
+        "contextSpan": {
+          "start": 13388,
+          "end": 13669,
+          "startLine": 137,
+          "endLine": 137
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "canonical-book",
+          "url": "https://www.kimballgroup.com/2008/09/slowly-changing-dimensions-part-2/",
+          "title": "Slowly Changing Dimensions Part 2",
+          "checkedAt": "2026-10-07",
+          "locator": "Type 2"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Add New Dimension Record; new surrogate key.",
+        "excerptKind": "paraphrase",
+        "locator": "Type 2"
+      },
+      "review": {
+        "checkedAt": "2026-10-07",
+        "method": "Confronto da assertion delimitada com a fonte externa; excerpt identificado como paráfrase quando não citação literal.",
+        "responsibility": "Pesquisa — 2026-10-07"
+      },
+      "proposedChanges": [],
+      "assertion": "A mudança gera uma **nova linha** na dimensão, com nova surrogate key.",
+      "verifiedScope": "A mudança gera uma **nova linha** na dimensão, com nova surrogate key.",
+      "context": "**Tipo 2 — Add new row.** A mudança gera uma **nova linha** na dimensão, com nova surrogate key. Colunas de controle: `data_inicio_validade`, `data_fim_validade`, `flag_registro_atual`, e frequentemente `versao`. A chave natural se repete entre as versões; a surrogate key é única.",
+      "statement": "Type 2 registra mudança em nova linha com nova surrogate key."
+    },
+    {
+      "id": "validity-interval",
+      "text": "- Detalhe fino que impressiona: as datas de validade devem ser um intervalo semiaberto `[inicio, fim)` para evitar ambiguidade na borda, e a linha corrente costuma usar `9999-12-31` como fim em vez de NULL, porque NULL complica os predicados de faixa (`>=` e `<`).",
+      "status": "NEEDS_SOURCE",
+      "justification": "As fontes consultadas não demonstram a convenção semiaberta [início,fim); permanece pendente de fonte específica.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 14216,
+          "end": 14286,
+          "startLine": 141,
+          "endLine": 141
+        },
+        "contextSpan": {
+          "start": 14184,
+          "end": 14448,
+          "startLine": 141,
+          "endLine": 141
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "canonical-book",
+          "url": "https://www.kimballgroup.com/2008/09/slowly-changing-dimensions-part-2/",
+          "title": "Slowly Changing Dimensions Part 2",
+          "checkedAt": "2026-10-07",
+          "locator": "Type 2"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Add New Dimension Record; new surrogate key.",
+        "excerptKind": "paraphrase",
+        "locator": "Type 2"
+      },
+      "review": null,
+      "proposedChanges": [],
+      "assertion": "as datas de validade devem ser um intervalo semiaberto `[inicio, fim)`",
+      "context": "- Detalhe fino que impressiona: as datas de validade devem ser um intervalo semiaberto `[inicio, fim)` para evitar ambiguidade na borda, e a linha corrente costuma usar `9999-12-31` como fim em vez de NULL, porque NULL complica os predicados de faixa (`>=` e `<`).",
+      "statement": "A convenção de intervalo semiaberto [início,fim) requer fonte específica."
+    },
+    {
+      "id": "far-future-sentinel",
+      "text": "- Detalhe fino que impressiona: as datas de validade devem ser um intervalo semiaberto `[inicio, fim)` para evitar ambiguidade na borda, e a linha corrente costuma usar `9999-12-31` como fim em vez de NULL, porque NULL complica os predicados de faixa (`>=` e `<`).",
+      "status": "NEEDS_SOURCE",
+      "justification": "A fonte consultada demonstra 9999-12-31 como exemplo de tutorial; não demonstra frequência geral de uso nem o argumento sobre NULL. A formulação original diz “costuma”, não afirma universalidade.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 14323,
+          "end": 14448,
+          "startLine": 141,
+          "endLine": 141
+        },
+        "contextSpan": {
+          "start": 14184,
+          "end": 14448,
+          "startLine": 141,
+          "endLine": 141
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "official-doc",
+          "url": "https://learn.microsoft.com/en-us/fabric/data-factory/slowly-changing-dimension-type-two",
+          "title": "Slowly changing dimension type two",
+          "checkedAt": "2026-10-07",
+          "locator": "Tutorial example, updated 2026-03-26"
+        }
+      ],
+      "evidence": {
+        "excerpt": "The tutorial uses EndDate 12/31/9999 as an example.",
+        "excerptKind": "paraphrase",
+        "locator": "Tutorial example, updated 2026-03-26"
+      },
+      "review": null,
+      "proposedChanges": [],
+      "assertion": "a linha corrente costuma usar `9999-12-31` como fim em vez de NULL, porque NULL complica os predicados de faixa (`>=` e `<`).",
+      "context": "- Detalhe fino que impressiona: as datas de validade devem ser um intervalo semiaberto `[inicio, fim)` para evitar ambiguidade na borda, e a linha corrente costuma usar `9999-12-31` como fim em vez de NULL, porque NULL complica os predicados de faixa (`>=` e `<`).",
+      "statement": "A fonte consultada apresenta 9999-12-31 como exemplo; frequência de uso e comportamento NULL seguem sem confirmação."
+    },
+    {
+      "id": "unknown-dimension-row",
+      "text": "5. **Permite linhas especiais** para casos de exceção: `-1 = desconhecido`, `-2 = não aplicável`, `-3 = ainda não chegou`. Isso é o que permite usar INNER JOIN em vez de LEFT JOIN entre fato e dimensão, evitando NULLs em chave estrangeira.",
+      "status": "VERIFIED",
+      "justification": "A fonte Kimball sustenta uma linha/chave default para desconhecido ou não aplicável; não estabelece que INNER JOIN seja prescrito.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 11988,
+          "end": 12005,
+          "startLine": 123,
+          "endLine": 123
+        },
+        "contextSpan": {
+          "start": 11932,
+          "end": 12171,
+          "startLine": 123,
+          "endLine": 123
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "canonical-book",
+          "url": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/fact-table-null/",
+          "title": "Fact Table Null",
+          "checkedAt": "2026-10-07",
+          "locator": "Unknown/not applicable dimension key"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Default row and surrogate key for unknown or not applicable.",
+        "excerptKind": "paraphrase",
+        "locator": "Unknown/not applicable dimension key"
+      },
+      "review": {
+        "checkedAt": "2026-10-07",
+        "method": "Confronto da assertion delimitada com a fonte externa; excerpt identificado como paráfrase quando não citação literal.",
+        "responsibility": "Pesquisa — 2026-10-07"
+      },
+      "proposedChanges": [],
+      "assertion": "-1 = desconhecido",
+      "verifiedScope": "-1 = desconhecido",
+      "context": "5. **Permite linhas especiais** para casos de exceção: `-1 = desconhecido`, `-2 = não aplicável`, `-3 = ainda não chegou`. Isso é o que permite usar INNER JOIN em vez de LEFT JOIN entre fato e dimensão, evitando NULLs em chave estrangeira.",
+      "statement": "A dimensão pode ter membro especial para chave desconhecida."
+    },
+    {
+      "id": "inner-join-prescription",
+      "text": "5. **Permite linhas especiais** para casos de exceção: `-1 = desconhecido`, `-2 = não aplicável`, `-3 = ainda não chegou`. Isso é o que permite usar INNER JOIN em vez de LEFT JOIN entre fato e dimensão, evitando NULLs em chave estrangeira.",
+      "status": "NEEDS_REVIEW",
+      "justification": "A fonte sobre default row não prescreve INNER JOIN. A decisão de join depende da semântica e do contrato dos dados.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 12055,
+          "end": 12133,
+          "startLine": 123,
+          "endLine": 123
+        },
+        "contextSpan": {
+          "start": 11932,
+          "end": 12171,
+          "startLine": 123,
+          "endLine": 123
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "canonical-book",
+          "url": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/fact-table-null/",
+          "title": "Fact Table Null",
+          "checkedAt": "2026-10-07",
+          "locator": "Unknown/not applicable dimension key"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Default row and surrogate key for unknown or not applicable.",
+        "excerptKind": "paraphrase",
+        "locator": "Unknown/not applicable dimension key"
+      },
+      "review": null,
+      "proposedChanges": [],
+      "assertion": "Isso é o que permite usar INNER JOIN em vez de LEFT JOIN entre fato e dimensão",
+      "context": "5. **Permite linhas especiais** para casos de exceção: `-1 = desconhecido`, `-2 = não aplicável`, `-3 = ainda não chegou`. Isso é o que permite usar INNER JOIN em vez de LEFT JOIN entre fato e dimensão, evitando NULLs em chave estrangeira.",
+      "statement": "A afirmação de que a existência de membro especial permite INNER JOIN requer revisão contextual."
+    },
+    {
+      "id": "columnar-performance-generalization",
+      "text": "**O ponto que diferencia uma boa resposta:** OLTP e OLAP não diferem só em \"como as pessoas usam\". Diferem em **padrão de acesso**, e todas as outras escolhas (layout físico, normalização, índices, garantias transacionais) são consequência do padrão de acesso. Se o entrevistador perguntar \"por que colunar é rápido em OLAP\", a resposta certa é sobre I/O: você lê só as colunas necessárias, e como valores de uma mesma coluna são do mesmo tipo e frequentemente similares, comprimem muito melhor (run-length, dictionary encoding). Menos bytes lidos = mais rápido. Não é magia, é volume de I/O.",
+      "status": "NEEDS_REVIEW",
+      "justification": "A documentação consultada trata SQL Server columnstore, enquanto o texto afirma genericamente sobre armazenamento colunar. A evidência não sustenta essa extensão nem ganhos universais.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 3252,
+          "end": 3284,
+          "startLine": 41,
+          "endLine": 41
+        },
+        "contextSpan": {
+          "start": 2961,
+          "end": 3553,
+          "startLine": 41,
+          "endLine": 41
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "official-doc",
+          "url": "https://learn.microsoft.com/en-us/sql/relational-databases/indexes/columnstore-indexes-query-performance?view=sql-server-ver17",
+          "title": "Columnstore indexes - query performance",
+          "checkedAt": "2026-10-07",
+          "locator": "SQL Server 2025 (17.x), query performance; updated 2026-09-21"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Columnstore compression and elimination can reduce I/O; benefits depend on the data and workload.",
+        "excerptKind": "paraphrase",
+        "locator": "SQL Server 2025 (17.x), query performance; updated 2026-09-21"
+      },
+      "review": null,
+      "proposedChanges": [],
+      "assertion": "por que colunar é rápido em OLAP",
+      "context": "**O ponto que diferencia uma boa resposta:** OLTP e OLAP não diferem só em \"como as pessoas usam\". Diferem em **padrão de acesso**, e todas as outras escolhas (layout físico, normalização, índices, garantias transacionais) são consequência do padrão de acesso. Se o entrevistador perguntar \"por que colunar é rápido em OLAP\", a resposta certa é sobre I/O: você lê só as colunas necessárias, e como valores de uma mesma coluna são do mesmo tipo e frequentemente similares, comprimem muito melhor (run-length, dictionary encoding). Menos bytes lidos = mais rápido. Não é magia, é volume de I/O.",
+      "statement": "A afirmação geral sobre desempenho colunar excede a evidência específica de columnstore consultada."
+    },
+    {
+      "id": "vault-many-to-many",
+      "text": "- **Link**: relacionamentos entre hubs. Um link de \"cliente comprou produto\" contém as hash keys dos hubs envolvidos. Todos os relacionamentos são modelados como many-to-many, independentemente da cardinalidade real hoje.",
+      "status": "NEEDS_SOURCE",
+      "justification": "O material de overview de fornecedor não prova que todo link é many-to-many independentemente da cardinalidade real.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 16646,
+          "end": 16749,
+          "startLine": 162,
+          "endLine": 162
+        },
+        "contextSpan": {
+          "start": 16528,
+          "end": 16749,
+          "startLine": 162,
+          "endLine": 162
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "vendor",
+          "url": "https://www.qlik.com/us/data-warehouse/data-vault",
+          "title": "Data Vault",
+          "checkedAt": "2026-10-07",
+          "locator": "Vendor overview"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Links establish relationships between business entities; presentation layer data marts are described.",
+        "excerptKind": "paraphrase",
+        "locator": "Vendor overview"
+      },
+      "review": null,
+      "proposedChanges": [],
+      "assertion": "Todos os relacionamentos são modelados como many-to-many, independentemente da cardinalidade real hoje.",
+      "context": "- **Link**: relacionamentos entre hubs. Um link de \"cliente comprou produto\" contém as hash keys dos hubs envolvidos. Todos os relacionamentos são modelados como many-to-many, independentemente da cardinalidade real hoje.",
+      "statement": "A afirmação many-to-many universal requer fonte específica."
+    },
+    {
+      "id": "vault-always-presentation",
+      "text": "- Consultar diretamente é impraticável — exige muitos joins. Por isso Data Vault **sempre** vem acompanhado de uma camada de apresentação (tipicamente star schema) construída em cima. Data Vault não substitui modelagem dimensional; ele fica atrás dela.",
+      "status": "NEEDS_REVIEW",
+      "justification": "A fonte de fornecedor descreve data marts na presentation layer, mas não sustenta “sempre” nem “impraticável” como universais.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 17660,
+          "end": 17782,
+          "startLine": 169,
+          "endLine": 169
+        },
+        "contextSpan": {
+          "start": 17599,
+          "end": 17851,
+          "startLine": 169,
+          "endLine": 169
+        },
+        "sectionId": "sec-6d7f74d938cf767c5738",
+        "anchor": "anchor-6d7f74d938cf767c5738",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [
+        {
+          "type": "vendor",
+          "url": "https://www.qlik.com/us/data-warehouse/data-vault",
+          "title": "Data Vault",
+          "checkedAt": "2026-10-07",
+          "locator": "Vendor overview"
+        }
+      ],
+      "evidence": {
+        "excerpt": "Links establish relationships between business entities; presentation layer data marts are described.",
+        "excerptKind": "paraphrase",
+        "locator": "Vendor overview"
+      },
+      "review": null,
+      "proposedChanges": [
+        {
+          "original": "- Consultar diretamente é impraticável — exige muitos joins. Por isso Data Vault **sempre** vem acompanhado de uma camada de apresentação (tipicamente star schema) construída em cima. Data Vault não substitui modelagem dimensional; ele fica atrás dela.",
+          "proposed": "- Consultar diretamente pode exigir muitos joins. Uma camada de apresentação (por exemplo, star schema/data marts) pode ser construída para consumo, conforme as necessidades do projeto.",
+          "reason": "A fonte vendor descreve data marts na presentation layer, mas não sustenta “sempre” nem “impraticável” como universais; a alteração delimita a recomendação sem mudar o original.",
+          "sources": [
+            "https://www.qlik.com/us/data-warehouse/data-vault"
+          ]
+        }
+      ],
+      "assertion": "Por isso Data Vault **sempre** vem acompanhado de uma camada de apresentação (tipicamente star schema) construída em cima.",
+      "context": "- Consultar diretamente é impraticável — exige muitos joins. Por isso Data Vault **sempre** vem acompanhado de uma camada de apresentação (tipicamente star schema) construída em cima. Data Vault não substitui modelagem dimensional; ele fica atrás dela.",
+      "statement": "A afirmação de que Data Vault sempre vem acompanhado de camada de apresentação é categórica."
+    },
+    {
+      "id": "monthly-growth-assumption",
+      "text": "*Resposta modelo:* Não da forma ingênua. Com 200 milhões de clientes e mudança mensal em atributos voláteis, a dimensão cresceria ~2,4 bilhões de linhas por ano, o que é maior que muitas tabelas fato — isso é o sintoma clássico de **rapidly changing dimension** modelada errado.",
+      "status": "NEEDS_REVIEW",
+      "justification": "Cálculo condicional: 200 milhões × 12 = 2,4 bilhões, se todos os 200 milhões mudassem uma vez por mês. O enunciado é um cenário de entrevista, não previsão factual.",
+      "source": {
+        "path": "engenharia-de-dados/01-modelagem-de-dados.md",
+        "sha256": "7ce8d788e7452942fff9a89a10851901c0d8245f1f0844ad97f40f1a5317ae28",
+        "span": {
+          "start": 35074,
+          "end": 35125,
+          "startLine": 318,
+          "endLine": 318
+        },
+        "contextSpan": {
+          "start": 34965,
+          "end": 35243,
+          "startLine": 318,
+          "endLine": 318
+        },
+        "sectionId": "sec-6e8732ff4d803c1132fb",
+        "anchor": "anchor-6e8732ff4d803c1132fb",
+        "rawSha256": "e4f40e63159ad026b11137d99129fdba0b0c14f3a6163669e0fcfa328a5876b1"
+      },
+      "externalSources": [],
+      "evidence": {
+        "excerpt": "Cálculo aritmético condicional: 200.000.000 × 12 = 2.400.000.000.",
+        "excerptKind": "calculation",
+        "locator": "Cálculo reproduzível; pressupõe mudança mensal de toda a população."
+      },
+      "review": null,
+      "proposedChanges": [],
+      "assertion": "a dimensão cresceria ~2,4 bilhões de linhas por ano",
+      "context": "*Resposta modelo:* Não da forma ingênua. Com 200 milhões de clientes e mudança mensal em atributos voláteis, a dimensão cresceria ~2,4 bilhões de linhas por ano, o que é maior que muitas tabelas fato — isso é o sintoma clássico de **rapidly changing dimension** modelada errado.",
+      "statement": "O resultado de 2,4 bilhões é cálculo condicional para 200 milhões de mudanças mensais."
+    }
+  ],
+  "normalization": {
+    "lineEndings": "LF",
+    "algorithm": "Somente CRLF e CR são convertidos para LF; nenhum outro caractere é transformado."
+  }
+}
