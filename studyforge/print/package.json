@@ -1,0 +1,8 @@
+{
+  "name": "studyforge-print",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "puppeteer": "25.12.0"
+  }
+}

@@ -1,0 +1,1 @@
+{"compilerOptions":{"noEmit":true,"allowJs":true,"checkJs":true,"strict":false,"skipLibCheck":true,"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","jsx":"react-jsx","types":["node","react"]},"include":["render.mjs","src/**/*.mjs","src/**/*.jsx"]}
