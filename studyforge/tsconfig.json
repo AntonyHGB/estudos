@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": false,
+    "checkJs": true,
+    "allowJs": true,
+    "skipLibCheck": false,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true
+    ,"esModuleInterop": true,
+    "types": ["node"]
+  },
+  "include": ["model.mjs", "validate.mjs", "types.d.ts"]
+}

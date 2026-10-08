@@ -1,0 +1,38 @@
+{
+  "name": "estudos-studyforge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "study:inventory": "node studyforge/cli.mjs inventory",
+    "study:parse": "node studyforge/cli.mjs parse",
+    "study:validate": "node studyforge/cli.mjs validate",
+    "study:verify": "node studyforge/cli.mjs verify",
+    "study:lesson": "node studyforge/cli.mjs lesson",
+    "study:cards": "node studyforge/cli.mjs flashcards",
+    "study:pdf": "node studyforge/cli.mjs pdf",
+    "study:audio": "node studyforge/cli.mjs audio-script",
+    "study:video": "node studyforge/cli.mjs video",
+    "study:build": "node studyforge/cli.mjs build",
+    "study:test": "node --test studyforge/platform.test.mjs studyforge/studyforge.test.mjs studyforge/audit.test.mjs studyforge/cache.test.mjs studyforge/pipeline.test.mjs studyforge/lesson/lesson.test.mjs studyforge/renderers.test.mjs",
+    "study:test:pdf": "node --test studyforge/print/smoke.test.mjs",
+    "study:test:video": "npm --prefix studyforge/video test",
+    "study:typecheck:video": "npm --prefix studyforge/video run typecheck",
+    "study:setup:print": "npm --prefix studyforge/print ci",
+    "study:setup:video": "npm --prefix studyforge/video ci",
+    "study:lint": "node --check studyforge/cli.mjs && node --check studyforge/pipeline.mjs && node --check studyforge/cache.mjs && node --check studyforge/validate.mjs && node --check studyforge/model.mjs && node --check studyforge/parser.mjs && node --check studyforge/lesson/index.mjs && node --check studyforge/renderers/index.mjs && node --check studyforge/audit/index.mjs && node --check studyforge/print/index.mjs && node --check studyforge/video/render.mjs",
+    "study:typecheck": "tsc --project studyforge/tsconfig.json",
+    "studyforge:inventory": "npm run study:inventory",
+    "studyforge:parse": "npm run study:parse",
+    "studyforge:validate": "npm run study:validate",
+    "studyforge:test": "npm run study:test"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.4",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "highlight.js": "11.12.0",
+    "markdown-it": "15.0.2"
+  }
+}

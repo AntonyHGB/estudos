@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://studyforge.local/schemas/topic-v1.json",
+  "title": "StudyForge canonical topic v1",
+  "type": "object",
+  "required": ["schemaVersion", "id", "order", "domain", "title", "subtitle", "source", "rawMarkdown", "partitions", "sections", "interviewQuestions", "quizQuestions", "metadata"],
+  "properties": {
+    "schemaVersion": {"const": 1}, "id": {"type": "string", "minLength": 1}, "order": {"type": "integer", "minimum": 1},
+    "domain": {"enum": ["engenharia-de-dados", "machine-learning"]}, "title": {"type": "string", "minLength": 1}, "subtitle": {"type": ["string", "null"]},
+    "source": {"$ref": "#/$defs/fileSource"}, "rawMarkdown": {"type": "string"},
+    "partitions": {"type": "array", "items": {"$ref": "#/$defs/partition"}}, "sections": {"type": "array", "items": {"$ref": "#/$defs/section"}},
+    "interviewQuestions": {"type": "array", "items": {"$ref": "#/$defs/interviewQuestion"}}, "quizQuestions": {"type": "array", "items": {"$ref": "#/$defs/quizQuestion"}},
+    "metadata": {"type": "object", "required": ["verification"], "properties": {"verification": {"type": "object", "required": ["status", "reason"], "properties": {"status": {"enum": ["unverified", "verified", "needs-review", "conflicting"]}, "reason": {"type": "string", "minLength": 1}}, "additionalProperties": false}}, "additionalProperties": true}
+  },
+  "$defs": {
+    "span": {"type": "object", "required": ["start", "end", "startLine", "endLine"], "properties": {"start": {"type": "integer", "minimum": 0}, "end": {"type": "integer", "minimum": 0}, "startLine": {"type": "integer", "minimum": 1}, "endLine": {"type": "integer", "minimum": 1}}, "additionalProperties": false},
+    "fileSource": {"type": "object", "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}, "additionalProperties": false},
+    "sourceRef": {"type": "object", "required": ["path", "sha256", "span", "anchor"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "span": {"$ref": "#/$defs/span"}, "anchor": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+    "partition": {"type": "object", "required": ["kind", "markdown", "plainText", "source"], "properties": {"kind": {"enum": ["blank", "heading", "list", "table", "blockquote", "question-or-emphasis", "paragraph", "code"]}, "markdown": {"type": "string"}, "plainText": {"type": "string"}, "source": {"$ref": "#/$defs/span"}}, "additionalProperties": false},
+    "section": {"type": "object", "required": ["id", "level", "title", "markdown", "plainText", "source"], "properties": {"id": {"type": "string", "minLength": 1}, "level": {"const": 2}, "title": {"type": "string", "minLength": 1}, "markdown": {"type": "string"}, "plainText": {"type": "string"}, "source": {"$ref": "#/$defs/sourceRef"}}, "additionalProperties": false},
+    "followUp": {"type": "object", "required": ["question", "answer", "source"], "properties": {"question": {"type": "string", "minLength": 1}, "answer": {"type": ["string", "null"]}, "source": {"$ref": "#/$defs/span"}}, "additionalProperties": false},
+    "interviewQuestion": {"type": "object", "required": ["id", "kind", "difficulty", "difficultyReason", "question", "modelAnswer", "followUps", "traps", "sourceAnchor", "source"], "properties": {"id": {"type": "string", "minLength": 1}, "kind": {"enum": ["question", "scenario", "case-study", "calibration"]}, "difficulty": {"enum": ["basic", "intermediate", "advanced", null]}, "difficultyReason": {"type": ["string", "null"]}, "question": {"type": "string", "minLength": 1}, "modelAnswer": {"type": ["string", "null"]}, "followUps": {"type": "array", "items": {"$ref": "#/$defs/followUp"}}, "traps": {"type": "array", "items": {"type": "string"}}, "sourceAnchor": {"type": "string", "minLength": 1}, "source": {"$ref": "#/$defs/sourceRef"}}, "additionalProperties": false},
+    "quizQuestion": {"type": "object", "required": ["id", "theme", "index", "difficulty", "question", "alternatives", "correctIndex", "explanation", "sourceTopic", "source"], "properties": {"id": {"type": "string", "minLength": 1}, "theme": {"type": "string", "pattern": "^\\d{2}$"}, "index": {"type": "integer", "minimum": 0}, "difficulty": {"enum": ["basic", "intermediate", "advanced", null]}, "question": {"type": "string", "minLength": 1}, "alternatives": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}, "correctIndex": {"type": "integer", "minimum": 0}, "explanation": {"type": "string", "minLength": 1}, "sourceTopic": {"type": "string", "minLength": 1}, "source": {"type": "object", "required": ["path", "sha256", "pointer"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "pointer": {"type": "string", "pattern": "^/\\d{2}/\\d+$"}}, "additionalProperties": false}}, "additionalProperties": false}
+  },
+  "additionalProperties": false
+}
