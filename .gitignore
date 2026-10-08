@@ -8,6 +8,10 @@ Desktop.ini
 
 # Node (caso algum dia entre dependência aqui)
 node_modules/
+studyforge/out/
+generated/
+generated/.cache/
+artifacts/media/
 
 # Arquivos temporarios de teste
 __*

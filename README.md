@@ -13,6 +13,10 @@ Material conceitual para entrevistas técnicas, com site estático gerado a part
 
 ## Como funciona
 
+### Compilador StudyForge
+
+Além do site estático existente, `studyforge/` contém um compilador de conhecimento source-aware: Markdown + quiz → modelo canônico → auditoria/StudyLesson → renderers, incluindo PDF e vídeo MP4. Não usa LLM/API nem sintetiza fala. O site atual continua sendo gerado por `node build-site.mjs` e funciona por `file://`. Consulte [StudyForge README](studyforge/README.md) e [arquitetura/auditoria](studyforge/docs/architecture.md) para comandos, limites e workflow.
+
 Os arquivos `.md` são a fonte de verdade do conteúdo, e cada `quiz.json` guarda as questões
 de múltipla escolha. O script `build-site.mjs` (Node puro, sem dependências) lê tudo e gera,
 para cada pasta:

@@ -23,3 +23,19 @@ jobs:
       # comparação os exclui e cobre HTML, JS e manifest.
       - name: Verificar drift dos arquivos gerados
         run: git diff --exit-code -- . ':(exclude)*.png'
+  studyforge:
+    name: StudyForge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run study:lint
+      - run: npm run study:typecheck
+      - run: npm run study:test
+      - run: node studyforge/cli.mjs inventory
+      - run: node studyforge/cli.mjs parse --all
+      - run: node studyforge/cli.mjs validate

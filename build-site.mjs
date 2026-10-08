@@ -259,7 +259,12 @@ function inline(md, linkMap) {
   return s;
 }
 
+function normalizeMarkdown(md) {
+  return md.replace(/\r\n?/g, '\n');
+}
+
 function mdToHtml(md, linkMap) {
+  md = normalizeMarkdown(md);
   const lines = md.split('\n');
   const out = [];
   let i = 0;
@@ -316,7 +321,7 @@ function mdToHtml(md, linkMap) {
       continue;
     }
 
-    const listStart = line.match(/^(\s*)([-*]|\d+\.)\s+/);
+    const listStart = line.match(/^(\s*)([-*]|\d+\.)\s+(.*)$/);
     if (listStart) {
       const ordered = /^\d+\./.test(listStart[2]);
       const items = [];
@@ -462,6 +467,7 @@ function parseQuestionSection(body) {
 }
 
 function parseTopic(md, linkMap) {
+  md = normalizeMarkdown(md);
   const lines = md.split('\n');
   const titleLine = lines.find((l) => /^#\s+/.test(l)) || '# Sem título';
   const fullTitle = titleLine.replace(/^#\s+/, '').trim();
